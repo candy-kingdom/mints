@@ -41,7 +41,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: MIT',
         'Natural Language :: English',
-        'Programming Language :: Python :: 3.7.4',
+        'Programming Language :: Python :: 3.8.0',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
 )
