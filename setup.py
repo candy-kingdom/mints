@@ -1,4 +1,3 @@
-from io import open
 from re import search
 from setuptools import setup, find_packages
 
