@@ -1,29 +1,29 @@
 from io import open
 from re import search
-from os import linesep
 from setuptools import setup, find_packages
 
 
 PATH = 'candies/cli'
 
 
+def text_of(path):
+    with open(path, 'rt', encoding='utf8') as file:
+        return file.read()
+
+
 def version():
-    with open(f'{PATH}/__init__.py', 'rt', encoding='utf8') as f:
-        version = search(r"__version__ = \'(.*?)\'", f.read()).group(1)
-    return version
+    text = text_of(f'{PATH}/__init__.py')
+    match = search(r"__version__ = \'(.*?)\'", text)
+
+    return match.group(1)
 
 
 def readme():
-    with open('README.md', 'rt', encoding='utf8') as f:
-        readme = f.read()
-    return readme
+    return text_of('README.md')
 
 
-def requirements(filename='requirements.txt'):
-    with open(filename, 'rt', encoding='utf-8') as stream:
-        content = stream.read()
-    return [line for line in content.split(linesep)
-            if not line.strip().startswith('#')]
+def requirements():
+    return text_of('requirements.txt')
 
 
 setup(
@@ -43,5 +43,6 @@ setup(
         'License :: MIT',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.7.4',
+        'Topic :: Software Development :: Libraries :: Python Modules'
     ],
 )
