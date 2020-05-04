@@ -8,8 +8,8 @@ class Arg:
         Consider looking at the documentation of the `candies.cli.CLI` class
         for more details about which kinds of CLIs the `Arg` produces.
 
-    Args:
-        description (str, optional): A description of an argument.
+    Attributes:
+        description (str): A description of an argument.
 
     Examples:
         @cli
