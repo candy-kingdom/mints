@@ -9,7 +9,9 @@ from candies.cli.parsers.parser import Parser
 class StandardParser(Parser):
     """A parser that uses the standard `argparse` package.
 
-    Constructs an instance of `ArgumentParser` from the provided function.
+    Constructs an instance of `argparse.ArgumentParser` from the provided
+    function, and uses it to parse the CLI arguments into key-value pairs.
+
     For example, for the following function
 
         def concat(left: Arg['left operand'], right: Arg['right operand']):
