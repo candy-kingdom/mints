@@ -1,59 +1,75 @@
 import sys
-from typing import List, Callable, Optional, Union
+from typing import Callable, Optional, Union, Iterable
 
-from candies.cli.parsers import Parser, StandardParser
+from candies.cli.command import Command
+from candies.cli.parsers.parser import Parser
+from candies.cli.parsers.standard import StandardParser
 
 
 class CLI:
     """A command line interface.
 
-    Examples:
-        @cli
-        def main(a: Arg['description'],
-                 b: Arg['description'] = 'default'):
-            \"""Some help text.\"""
-            ...
-
-        if __name__ == '__main__':
-            main()
+    Attributes:
+        main: A main command to execute.
+        parser: A parser to parse command line arguments with
+            (`candies.cli.parsers.StandardParser` if not specified).
     """
 
-    def __init__(self, main):
-        self._main = main
+    def __init__(self, main: Command, parser: Optional[Parser] = None):
+        self.main = main
+        self.parser = parser
 
-    def __call__(self, args: List[str] = None, parser: Parser = None):
-        """Parses the specified arguments and calls the wrapped function."""
+    def __call__(self, args: Optional[Iterable[str]] = None):
+        """Parses the command line arguments and executes the command.
 
-        if parser is None:
-            parser = StandardParser(self._main)
+        Args:
+            args: A list of command line arguments as they would be presented
+                in `sys.argv` (except for the name of the file). For example,
+                an input string 'main.py --a=10 --b=20' should be converted to
+                ['--a=10', '--b=20'] and passed to this method.
+                `argv[1:]` if not explicitly specified.
+        """
 
-        args = parser.parse(args or sys.argv[1:])
+        parser = self.parser or StandardParser(self)
 
-        # Note: this approach does not handle `--help`.
-        return self._main(**args)
+        command = self.main
+        context = None
 
-    def command(self, func):
-        raise NotImplementedError
+        for invoke in parser.parse(args or sys.argv[1:]):
+            command, context = invoke(command, context)
+
+    def command(self, *args, **kwargs):
+        """Defines a subcommand.
+
+        Consider looking at the documentation of the `Command.command` method
+        for more details.
+        """
+
+        return self.main.command(*args, **kwargs)
 
 
-def cli(func: Optional[Callable] = None) -> Union[Callable, CLI]:
-    """Constructs a CLI from the specified function.
+def cli(func: Optional[Callable] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None) -> Union[Callable, CLI]:
+    """Constructs a `CLI` from the specified function.
 
     Args:
-        func (function, optional): A function to construct a CLI from.
+        func: A function to construct a `CLI` from.
+        name: A name of the main command.
+        description: A description of the main command.
 
     Returns:
-        Either an instance of `CLI` if `func` was specified or a decorator
-        to wrap a function with.
+        Either an instance of `CLI` if `func` was specified
+        or a decorator to wrap a function with.
 
     Examples:
         @cli
-        def fetch(branch):
+        def git(version):
             ...
     """
 
-    if func is None:
-        return \
-            lambda x: CLI(x)
-    else:
-        return CLI(func)
+    def wrap(x):
+        return CLI(Command(x, name, description))
+
+    return wrap(func) if func is not None else \
+           wrap

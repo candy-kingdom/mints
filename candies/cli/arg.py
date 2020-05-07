@@ -13,13 +13,10 @@ class Arg:
 
     Examples:
         @cli
-        def main(a: Arg['argument a'],
-                 b: Arg['argument b']):
+        def main(a: Arg('argument a'),
+                 b: Arg('argument b')):
             ...
     """
 
     def __init__(self, description: str = None):
         self.description = description
-
-    def __class_getitem__(cls, description: str):
-        return Arg(description)
