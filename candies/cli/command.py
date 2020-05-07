@@ -43,7 +43,7 @@ class Command:
                 func: Optional[Callable] = None,
                 name: Optional[str] = None,
                 description: Optional[str] = None) -> Union[Callable, 'Command']:
-        """Registers a subcommand.
+        """Defines a subcommand.
 
         A subcommand is executed right after the parent one,
         and the latter may also return a value that will be passed

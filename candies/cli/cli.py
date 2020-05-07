@@ -39,7 +39,7 @@ class CLI:
             command, context = invoke(command, context)
 
     def command(self, *args, **kwargs):
-        """Registers a subcommand.
+        """Defines a subcommand.
 
         Consider looking at the documentation of the `Command.command` method
         for more details.
