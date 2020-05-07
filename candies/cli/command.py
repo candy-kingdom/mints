@@ -5,7 +5,7 @@ class Command:
     """A command of a CLI.
 
     Attributes:
-        func: A function to be executed when the command if invoked.
+        func: A function to be executed when the command is invoked.
         name: A name of the command
             (`func.__name__` if not explicitly specified).
         description: A description of the command

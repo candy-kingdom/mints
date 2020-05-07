@@ -50,7 +50,7 @@ def cli(func: Optional[Callable] = None,
     """Constructs a `CLI` from the specified function.
 
     Args:
-        func: A function to construct a command from.
+        func: A function to construct a `CLI` from.
         name: A name of the main command.
         description: A description of the main command.
 

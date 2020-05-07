@@ -8,7 +8,7 @@ class Invocation:
     """An invocation of a CLI command.
 
     Attributes:
-        args: A dictionary that maps
+        args: A dictionary of arguments that maps arguments' names to values.
         next: A name of the command to be executed next.
     """
 
