@@ -3,6 +3,7 @@ from typing import Callable, Optional, Union, Iterable
 
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser
+from candies.cli.parsers.standard import StandardParser
 
 
 class CLI:
@@ -28,7 +29,6 @@ class CLI:
                 ['--a=10', '--b=20'] and passed to this method.
                 `argv[1:]` if not explicitly specified.
         """
-        from candies.cli.parsers.standard import StandardParser
 
         parser = self.parser or StandardParser(self)
 
@@ -39,7 +39,11 @@ class CLI:
             command, context = invoke(command, context)
 
     def command(self, *args, **kwargs):
-        """Registers a subcommand."""
+        """Registers a subcommand.
+
+        Consider looking at the documentation of the `Command.command` method
+        for more details.
+        """
 
         return self.main.command(*args, **kwargs)
 

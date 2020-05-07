@@ -10,7 +10,7 @@ class Command:
             (`func.__name__` if not explicitly specified).
         description: A description of the command
             (`func.__doc__` if not explicitly specified).
-        subcommands: A dictionary that maps a name of a subcommand
+        subcommands: A dictionary that maps a subcommand name
             to the subcommand itself.
 
     Examples:
@@ -45,6 +45,10 @@ class Command:
                 description: Optional[str] = None) -> Union[Callable, 'Command']:
         """Registers a subcommand.
 
+        A subcommand is executed right after the parent one,
+        and the latter may also return a value that will be passed
+        as an argument to the subcommand.
+
         Args:
             func: A function to be executed when the subcommand is invoked.
             name: A name of the subcommand
@@ -53,16 +57,16 @@ class Command:
                 (`func.__doc__` if not explicitly specified).
         """
 
-        def register(x):
+        def define(x):
             command = Command(x, name, description)
 
             if command.name in self.subcommands:
-                raise NameError(f'A command `{command.name}` has '
-                                f'already been registered.')
+                raise ValueError(f'A command `{command.name}` has '
+                                 f'already been defined.')
 
             self.subcommands[command.name] = command
 
             return command
 
-        return register(func) if func is not None else \
-               register
+        return define(func) if func is not None else \
+               define
