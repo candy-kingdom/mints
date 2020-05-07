@@ -1,8 +1,9 @@
 from argparse import ArgumentParser
-from typing import Iterable
+from typing import Iterable, Tuple, Any
 import inspect
 
 from candies.cli.arg import Arg
+from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser, Invocation
 
 
@@ -61,11 +62,11 @@ class StandardParser(Parser):
         return invocations
 
 
-def configure(parser, command, prefix='.'):
+def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
     """Configures an `argparse.ArgumentParser` from the specified `command`.
 
     This function configures an instance of `argparse.ArgumentParser` for
-    parsing the provided `command` and adds subparsers its `subcommands`.
+    parsing the provided `command` and adds subparsers for its `subcommands`.
     The names of parsed subcommands are stored as follows:
         1-st level subcommands are stored with a key '.command';
         2-nd level subcommands are stored with a key '..command';
@@ -95,7 +96,7 @@ def configure(parser, command, prefix='.'):
             configure(subparser, subcommand, prefix + '.')
 
 
-def configuration(parameter):
+def configuration(parameter: inspect.Parameter) -> Iterable[Tuple[str, Any]]:
     """Returns an argument configuration for the specified `parameter`."""
 
     annotation = parameter.annotation
