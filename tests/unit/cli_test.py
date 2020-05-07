@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
-from candies.cli import cli, CLI
+from candies.cli.cli import cli, CLI
+from candies.cli.parsers.parser import Invocation
 
 
 def test_that_cli_decorates_function():
@@ -21,12 +22,12 @@ def test_that_cli_returns_decorator_when_called_without_function():
 
 
 def test_that_cli_calls_decorated_function():
-    func = MagicMock()
+    command = MagicMock()
     parser = MagicMock()
-    parser.parse.return_value = {'a': 'x', 'b': 42}
+    parser.parse.return_value = [Invocation(args={'a': 'x', 'b': 42})]
 
-    cli_ = CLI(func)
-    cli_(['a=x', 'b=42'], parser)
+    cli_ = CLI(command, parser)
+    cli_(['a=x', 'b=42'])
 
     parser.parse.assert_called_once_with(['a=x', 'b=42'])
-    func.assert_called_once_with(a='x', b=42)
+    command.func.assert_called_once_with(a='x', b=42)
