@@ -14,7 +14,7 @@ class Flag:
 
     Attributes:
         description (str): A description of an argument. Shown in help page.
-        short (str): A short form of an argument. Must consist of 1 letter.
+        short (str): A short form of an argument. Must be non empty and consist of 1 letter.
 
     Examples:
         # To handle the mentioned above CLI, one could write:
