@@ -99,11 +99,19 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
 
         if short is '':
             raise ValueError(f"Short name of the flag '{parameter.name}' "
-                             f"is too short")
+                             f"'{short}' "
+                             f"is an empty string")
 
         if len(short) > 1:
             raise ValueError(f"Short name of the flag '{parameter.name}' "
+                             f"'{short}' "
                              f"consists of more than one character")
+
+
+        if not short.isalpha():
+            raise ValueError(f"Short name of the flag '{parameter.name}' "
+                             f"'{short}' "
+                             f"is not an alphabetic letter")
 
         parser.add_argument(f'--{parameter.name}',
                             f'-{short}',

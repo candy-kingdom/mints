@@ -313,3 +313,29 @@ def test_flag_with_too_long_short():
 
     # Assert.
     assert isinstance(ex, BaseException)
+
+
+def test_flag_with_digit_short():
+    # Arrange.
+    @cli
+    def main(x: Flag(short='1')):
+        return x
+
+    # Act.
+    ex = execute(main, with_='--x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
+
+
+def test_flag_with_sign_short():
+    # Arrange.
+    @cli
+    def main(x: Flag(short='-')):
+        return x
+
+    # Act.
+    ex = execute(main, with_='--x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
