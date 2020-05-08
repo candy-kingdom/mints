@@ -44,8 +44,15 @@ class CLI:
         Consider looking at the documentation of the `Command.command` method
         for more details.
         """
-
         return self.main.command(*args, **kwargs)
+
+    def help(self, *args, **kwargs):
+        """Defines a function to be called for `--help`.
+
+        Consider looking at the documentation of the `Command.command` method
+        for more details.
+        """
+        return self.main.help(*args, **kwargs)
 
 
 def cli(func: Optional[Callable] = None,
