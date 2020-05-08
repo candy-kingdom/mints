@@ -331,7 +331,7 @@ def test_flag_with_digit_short():
 def test_flag_with_sign_short():
     # Arrange.
     @cli
-    def main(x: Flag(short='-')):
+    def main(x: Flag(short='1')):
         return x
 
     # Act.
