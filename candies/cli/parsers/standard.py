@@ -1,8 +1,9 @@
 from argparse import ArgumentParser
-from typing import Iterable, Tuple, Any
+from typing import Iterable, Tuple, Any, Dict
 import inspect
 
-from candies.cli.arg import Arg
+from candies.cli.args.arg import Arg
+from candies.cli.args.flag import Flag
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser, Invocation
 
@@ -66,7 +67,7 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
     """Configures an `argparse.ArgumentParser` from the specified `command`.
 
     This function configures an instance of `argparse.ArgumentParser` for
-    parsing the provided `command` and adds subparsers for its `subcommands`.
+    parsing the provided `command`, and adds subparsers for its `subcommands`.
     The names of parsed subcommands are stored as follows:
         1-st level subcommands are stored with a key '.command';
         2-nd level subcommands are stored with a key '..command';
@@ -76,15 +77,57 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
         {'.command': 'tool', '..command': 'install', 'g': 'something'}.
     """
 
+    def is_(x: inspect.Parameter, of: type) -> bool:
+        return isinstance(x, of) or x == of
+
+    def configure_arg(x: inspect.Parameter, config: Dict):
+        parser.add_argument(parameter.name,
+                            **config)
+
+    def configure_flag(x: inspect.Parameter, config: Dict):
+        # This actually makes an arg to behave like a flag,
+        # so one could call `--x` instead of `--x y`.
+        config['action'] = 'store_true'
+
+        if parameter.default is parameter.empty:
+            config['default'] = False
+        else:
+            config['default'] = bool(parameter.default)
+
+        short = getattr(parameter.annotation, 'short', None)
+        short = short if short is not None else parameter.name[0]
+
+        if short is '':
+            raise ValueError(f"Short name of the flag '{parameter.name}' "
+                             f"is too short")
+
+        if len(short) > 1:
+            raise ValueError(f"Short name of the flag '{parameter.name}' "
+                             f"consists of more than one character")
+
+        parser.add_argument(f'--{parameter.name}',
+                            f'-{short}',
+                            **config)
+
     parser.description = command.description
 
     signature = inspect.signature(command.func)
 
     # Add parameters to the parser.
     for parameter in signature.parameters.values():
-        parser.add_argument(f'-{parameter.name[0]}',
-                            f'--{parameter.name}',
-                            **dict(configuration(parameter)))
+        config = {}
+
+        description = getattr(parameter.annotation, 'description', None)
+        if description is not None:
+            config['help'] = description
+
+        if is_(parameter.annotation, Arg):
+            configure_arg(parameter, config)
+
+        if is_(parameter.annotation, Flag):
+            configure_flag(parameter, config)
+
+        # TODO: Option.
 
     # Add subparsers to the parser.
     if command.subcommands:
@@ -94,18 +137,3 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
             subparser = subparsers.add_parser(name)
 
             configure(subparser, subcommand, prefix + '.')
-
-
-def configuration(parameter: inspect.Parameter) -> Iterable[Tuple[str, Any]]:
-    """Returns an argument configuration for the specified `parameter`."""
-
-    annotation = parameter.annotation
-
-    if annotation is not None and isinstance(annotation, Arg):
-        if annotation.description is not None:
-            yield ('help', annotation.description)
-
-    if parameter.default is not parameter.empty:
-        yield ('default', parameter.default)
-    else:
-        yield ('required', True)
