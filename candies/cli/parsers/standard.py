@@ -97,7 +97,7 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
         short = getattr(parameter.annotation, 'short', None)
         short = short if short is not None else parameter.name[0]
 
-        if short is '':
+        if short == '':
             raise ValueError(f"Flag '{parameter.name}' has invalid short name "
                              f"'{short}': "
                              f"it is an empty string")
