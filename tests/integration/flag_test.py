@@ -29,6 +29,19 @@ def test_one_flag():
     assert cx == True
 
 
+def test_one_flag_with_description():
+    # Arrange.
+    @cli
+    def main(x: Flag('Description.')):
+        return x
+
+    # Act.
+    cx = execute(main, with_='--x')
+
+    # Assert.
+    assert cx == True
+
+
 def test_one_flag_with_default_false():
     # Arrange.
     @cli
@@ -215,6 +228,19 @@ def test_one_flag_with_explicit_short():
     # Arrange.
     @cli
     def main(xyz: Flag(short='a')):
+        return xyz
+
+    # Act.
+    cx = execute(main, with_='-a')
+
+    # Assert.
+    assert cx == True
+
+
+def test_one_flag_with_explicit_short_and_description():
+    # Arrange.
+    @cli
+    def main(xyz: Flag('Description.', short='a')):
         return xyz
 
     # Act.
