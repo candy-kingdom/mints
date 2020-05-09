@@ -1,5 +1,5 @@
-from argparse import ArgumentParser
-from typing import Iterable, Tuple, Any, Dict
+from argparse import ArgumentParser, HelpFormatter
+from typing import Iterable, Any, Callable, Type, Dict
 import inspect
 
 from candies.cli.args.arg import Arg
@@ -35,9 +35,7 @@ class StandardParser(Parser):
         self.cli = cli
 
     def parse(self, args: Iterable[str]) -> Iterable[Invocation]:
-        parser = ArgumentParser()
-
-        configure(parser, self.cli.main)
+        parser = configured(new_parser, self.cli.main)
 
         args = parser.parse_args(list(args))
         args = args.__dict__
@@ -63,7 +61,33 @@ class StandardParser(Parser):
         return invocations
 
 
-def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
+def help(command: Command) -> Type[HelpFormatter]:
+    """Constructs a subclass of `argparse.HelpFormatter` for `command`."""
+
+    class Help(HelpFormatter):
+        """Defines a format of the `--help` message."""
+
+        def format_help(self):
+            if command.help_ is not None:
+                return command.help_(command)
+            else:
+                return super(Help, self).format_help()
+
+    return Help
+
+
+def new_parser(*args, **kwargs) -> ArgumentParser:
+    """Creates a new parser."""
+    return ArgumentParser(*args, **kwargs)
+
+
+def new_subparser(subparsers: Any) -> Callable[[Any], ArgumentParser]:
+    """Returns a function to create a new subparser."""
+    return subparsers.add_parser
+
+
+def configured(new: Callable, command: Command, prefix: str = '.') \
+        -> ArgumentParser:
     """Configures an `argparse.ArgumentParser` from the specified `command`.
 
     This function configures an instance of `argparse.ArgumentParser` for
@@ -76,6 +100,10 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
     For example, 'dotnet.py tool install -g something' would be parsed as
         {'.command': 'tool', '..command': 'install', 'g': 'something'}.
     """
+
+    parser = new(command.name,
+                 description=command.description,
+                 formatter_class=help(command))
 
     def is_(x: inspect.Parameter, of: type) -> bool:
         return isinstance(x, of) or x == of
@@ -116,8 +144,6 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
                             f'-{short}',
                             **config)
 
-    parser.description = command.description
-
     signature = inspect.signature(command.func)
 
     # Add parameters to the parser.
@@ -141,6 +167,6 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
         subparsers = parser.add_subparsers(dest=prefix + 'command')
 
         for name, subcommand in command.subcommands.items():
-            subparser = subparsers.add_parser(name)
+            _ = configured(new_subparser(subparsers), subcommand, prefix + '.')
 
-            configure(subparser, subcommand, prefix + '.')
+    return parser
