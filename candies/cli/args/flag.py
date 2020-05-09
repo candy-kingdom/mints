@@ -2,8 +2,9 @@ class Flag:
     """A command line argument that represents a boolean flag.
 
     Flag arguments are used to represent a turned on or turned off behaviour.
-    Unlike positional arguments, they're prefixed with either `-` (short
-    version) or `--`, and can be used in any place of a call.
+    Unlike positional arguments, they're prefixed with either short (`-`, `+`,
+    `/`) or long (`--`, `++`, etc.) prefix, and can be used in any place of a
+    call.
 
     For example, in the following line:
 
@@ -14,7 +15,8 @@ class Flag:
 
     Attributes:
         description (str): A description of an argument. Shown in help page.
-        short (str): A short form of an argument. Must be non empty and consist of 1 letter.
+        short (str): A short form of an argument.
+            Must be non empty and consist of 1 letter.
 
     Examples:
         # To handle the mentioned above CLI, one could write:
