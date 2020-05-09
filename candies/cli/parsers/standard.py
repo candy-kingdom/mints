@@ -60,7 +60,7 @@ class StandardParser(Parser):
         return invocations
 
 
-def help(command: Command) -> Type:
+def help(command: Command) -> Type[HelpFormatter]:
     """Constructs a subclass of `argparse.HelpFormatter` for `command`."""
 
     class Help(HelpFormatter):
