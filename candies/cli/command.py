@@ -78,13 +78,13 @@ class Command:
                define
 
     def help(self, func: Callable[['Command'], str]) -> Callable:
-        """Defines a function to be called for `--help`.
+        """Defines a callable to be called for `--help`.
 
-        The function must be able to accept a command to construct a help
+        The callable must be able to accept a command to construct a help
         message for and return a string with the message to be displayed.
 
         Args:
-            func: A function to be called when `--help` if specified.
+            func: A callable to be called when `--help` is specified.
 
         Returns:
             The `func` that was specified.

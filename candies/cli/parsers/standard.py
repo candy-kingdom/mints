@@ -61,7 +61,7 @@ class StandardParser(Parser):
 
 
 def help(command: Command) -> Type:
-    """Constructs a subclass of an `argparse.HelpFormatter` for a `command`."""
+    """Constructs a subclass of `argparse.HelpFormatter` for `command`."""
 
     class Help(HelpFormatter):
         """Defines a format of the `--help` message."""
@@ -85,7 +85,8 @@ def new_subparser(subparsers: Any) -> Callable[[Any], ArgumentParser]:
     return subparsers.add_parser
 
 
-def configured(new: Callable, command: Command, prefix: str = '.'):
+def configured(new: Callable, command: Command, prefix: str = '.') \
+        -> ArgumentParser:
     """Configures an `argparse.ArgumentParser` from the specified `command`.
 
     This function configures an instance of `argparse.ArgumentParser` for
@@ -99,8 +100,9 @@ def configured(new: Callable, command: Command, prefix: str = '.'):
         {'.command': 'tool', '..command': 'install', 'g': 'something'}.
     """
 
-    parser = new(command.name, formatter_class=help(command))
-    parser.description = command.description
+    parser = new(command.name,
+                 description=command.description,
+                 formatter_class=help(command))
 
     signature = inspect.signature(command.func)
 

@@ -49,7 +49,7 @@ class CLI:
     def help(self, *args, **kwargs):
         """Defines a function to be called for `--help`.
 
-        Consider looking at the documentation of the `Command.command` method
+        Consider looking at the documentation of the `Command.help` method
         for more details.
         """
         return self.main.help(*args, **kwargs)
