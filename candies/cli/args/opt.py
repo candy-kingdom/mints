@@ -1,10 +1,8 @@
 class Opt:
     """A command line argument that represents an option.
 
-    Options are used to represent named arguments.
-    Like flags (`Flag`), they have either short (`-`, `+`, `/`)
-    or long (`--`, `++`, etc.) prefix, and can be used in any place of a call.
-    Like arguments (`Arg`), options have values.
+    Options are used in same way as named arguments.
+    They can be considered as flags (see `Flag`) with explicit values.
 
     For example, in the following line:
 
