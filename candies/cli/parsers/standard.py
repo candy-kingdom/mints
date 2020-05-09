@@ -1,9 +1,10 @@
 from argparse import ArgumentParser
-from typing import Iterable, Tuple, Any, Dict
+from typing import Iterable, Tuple, Any, Dict, Type, Union, Optional
 import inspect
 
 from candies.cli.args.arg import Arg
 from candies.cli.args.flag import Flag
+from candies.cli.args.opt import Opt
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser, Invocation
 
@@ -77,25 +78,13 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
         {'.command': 'tool', '..command': 'install', 'g': 'something'}.
     """
 
-    def is_(x: inspect.Parameter, of: type) -> bool:
-        return isinstance(x, of) or x == of
+    def short_of(x: Union[Type, Any]) -> Optional[str]:
+        short = getattr(x, 'short', None)
 
-    def configure_arg(x: inspect.Parameter, config: Dict):
-        parser.add_argument(parameter.name,
-                            **config)
-
-    def configure_flag(x: inspect.Parameter, config: Dict):
-        # This actually makes an arg to behave like a flag,
-        # so one could call `--x` instead of `--x y`.
-        config['action'] = 'store_true'
-
-        if parameter.default is parameter.empty:
-            config['default'] = False
-        else:
-            config['default'] = bool(parameter.default)
-
-        short = getattr(parameter.annotation, 'short', None)
-        short = short if short is not None else parameter.name[0]
+        if short is None:
+            # If `None`, then considered as implicit.
+            # Will be replaced by the first letter of an argument.
+            return short
 
         if short == '':
             raise ValueError(f"Flag '{parameter.name}' has invalid short name "
@@ -112,8 +101,51 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
                              f"'{short}': "
                              f"it is not an alphabetic letter")
 
-        parser.add_argument(f'--{parameter.name}',
-                            f'-{short}',
+        return short
+
+    def prefixes_of(x: Union[Type, Any]) -> Optional[str]:
+        # TODO: Add more prefixes depending on `prefix` attribute.
+        return '-', '--'
+
+    def is_(x: inspect.Parameter, of: Type) -> bool:
+        return isinstance(x, of) or x == of
+
+    def configure_arg(x: inspect.Parameter, config: Dict):
+        parser.add_argument(x.name, **config)
+
+    def configure_flag(x: inspect.Parameter, config: Dict):
+        # This actually makes an arg to behave like a flag,
+        # so one could call `--x` instead of `--x y`.
+        config['action'] = 'store_true'
+
+        if x.default is x.empty:
+            config['default'] = False
+        else:
+            config['default'] = bool(x.default)
+
+        short = short_of(x.annotation)
+        short = short if short is not None else x.name[0]
+
+        short_prefix, long_prefix = prefixes_of(x.annotation)
+
+        parser.add_argument(f'{long_prefix}{x.name}',
+                            f'{short_prefix}{short}',
+                            **config)
+
+    def configure_opt(x: inspect.Parameter, config: Dict):
+        if x.default is not x.empty:
+            config['default'] = x.default
+            config['required'] = False
+        else:
+            config['required'] = True
+
+        short = short_of(x.annotation)
+        short = short if short is not None else x.name[0]
+
+        short_prefix, long_prefix = prefixes_of(x.annotation)
+
+        parser.add_argument(f'{long_prefix}{x.name}',
+                            f'{short_prefix}{short}',
                             **config)
 
     parser.description = command.description
@@ -134,7 +166,8 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
         if is_(parameter.annotation, Flag):
             configure_flag(parameter, config)
 
-        # TODO: Option.
+        if is_(parameter.annotation, Opt):
+            configure_opt(parameter, config)
 
     # Add subparsers to the parser.
     if command.subcommands:

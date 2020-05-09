@@ -2,7 +2,6 @@
 
 from typing import Callable
 
-
 from candies.cli.cli import cli
 from candies.cli.args.flag import Flag
 from candies.cli.args.arg import Arg

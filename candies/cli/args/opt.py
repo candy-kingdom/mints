@@ -1,17 +1,16 @@
-class Flag:
-    """A command line argument that represents a boolean flag.
+class Opt:
+    """A command line argument that represents an option.
 
-    Flag arguments are used to represent a turned on or turned off behaviour.
-    Unlike positional arguments, they're prefixed with either short (`-`, `+`,
-    `/`) or long (`--`, `++`, etc.) prefix, and can be used in any place of a
-    call.
+    Options are used to represent named arguments.
+    Like flags (`Flag`), they have either short (`-`, `+`, `/`)
+    or long (`--`, `++`, etc.) prefix, and can be used in any place of a call.
+    Like arguments (`Arg`), options have values.
 
     For example, in the following line:
 
-        $ git status --short
+        $ say "Hello, world!" --times 3
 
-    `--short` is a flag that tells `status` command to print the output
-    in the short-format.
+    `--times` is an option with value of `3`.
 
     Attributes:
         description (str): A description of an argument. Shown in help page.
