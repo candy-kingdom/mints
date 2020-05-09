@@ -45,10 +45,6 @@ $ pip install candy-cli
 
 ...
 
-## Building
-
-To build from source ...
-
 ## License
 
 The package is licensed under the [MIT](https://github.com/candy-kingdom/cli/blob/master/LICENSE) license.
