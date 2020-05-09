@@ -196,3 +196,16 @@ def test_one_opt_with_explicit_short():
 
     # Assert.
     assert cx == '1'
+
+
+def test_opt_specified_twice():
+    # Arrange.
+    @cli
+    def main(x: Opt):
+        return x
+
+    # Act.
+    cx = execute(main, with_='--x 1 --x 2')
+
+    # Assert.
+    assert cx is '2'

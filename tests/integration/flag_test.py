@@ -338,3 +338,16 @@ def test_flag_with_sign_short():
 
     # Assert.
     assert isinstance(ex, BaseException)
+
+
+def test_flag_specified_twice():
+    # Arrange.
+    @cli
+    def main(x: Flag):
+        return x
+
+    # Act.
+    cx = execute(main, with_='--x --x')
+
+    # Assert.
+    assert cx is True
