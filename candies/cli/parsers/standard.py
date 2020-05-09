@@ -107,7 +107,6 @@ def configure(parser: ArgumentParser, command: Command, prefix: str = '.'):
                              f"'{short}': "
                              f"it consists of more than one character")
 
-
         if not short.isalpha():
             raise ValueError(f"Flag '{parameter.name}' has invalid short name "
                              f"'{short}': "
