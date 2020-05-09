@@ -1,13 +1,12 @@
 """Various tests for `candies.cli.args.arg.Arg`."""
 
-from typing import Callable
-
+from typing import Callable, Any
 
 from candies.cli.cli import cli
 from candies.cli.args.arg import Arg
 
 
-def execute(cli_: Callable, with_: str):
+def execute(cli_: Callable, with_: str) -> Any:
     try:
         return cli_(with_.split())
     # `BaseException`, because `argparse` calls `exit` on error.
