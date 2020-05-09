@@ -1,8 +1,9 @@
 from argparse import ArgumentParser, HelpFormatter
-from typing import Iterable, Tuple, Any, Callable, Type
+from typing import Iterable, Any, Callable, Type, Dict
 import inspect
 
-from candies.cli.arg import Arg
+from candies.cli.args.arg import Arg
+from candies.cli.args.flag import Flag
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser, Invocation
 
@@ -90,7 +91,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
     """Configures an `argparse.ArgumentParser` from the specified `command`.
 
     This function configures an instance of `argparse.ArgumentParser` for
-    parsing the provided `command` and adds subparsers for its `subcommands`.
+    parsing the provided `command`, and adds subparsers for its `subcommands`.
     The names of parsed subcommands are stored as follows:
         1-st level subcommands are stored with a key '.command';
         2-nd level subcommands are stored with a key '..command';
@@ -104,13 +105,62 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                  description=command.description,
                  formatter_class=help(command))
 
+    def is_(x: inspect.Parameter, of: type) -> bool:
+        return isinstance(x, of) or x == of
+
+    def configure_arg(x: inspect.Parameter, config: Dict):
+        parser.add_argument(parameter.name,
+                            **config)
+
+    def configure_flag(x: inspect.Parameter, config: Dict):
+        # This actually makes an arg to behave like a flag,
+        # so one could call `--x` instead of `--x y`.
+        config['action'] = 'store_true'
+
+        if parameter.default is parameter.empty:
+            config['default'] = False
+        else:
+            config['default'] = bool(parameter.default)
+
+        short = getattr(parameter.annotation, 'short', None)
+        short = short if short is not None else parameter.name[0]
+
+        if short == '':
+            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+                             f"'{short}': "
+                             f"it is an empty string")
+
+        if len(short) > 1:
+            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+                             f"'{short}': "
+                             f"it consists of more than one character")
+
+        if not short.isalpha():
+            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+                             f"'{short}': "
+                             f"it is not an alphabetic letter")
+
+        parser.add_argument(f'--{parameter.name}',
+                            f'-{short}',
+                            **config)
+
     signature = inspect.signature(command.func)
 
     # Add parameters to the parser.
     for parameter in signature.parameters.values():
-        parser.add_argument(f'-{parameter.name[0]}',
-                            f'--{parameter.name}',
-                            **dict(configuration(parameter)))
+        config = {}
+
+        description = getattr(parameter.annotation, 'description', None)
+        if description is not None:
+            config['help'] = description
+
+        if is_(parameter.annotation, Arg):
+            configure_arg(parameter, config)
+
+        if is_(parameter.annotation, Flag):
+            configure_flag(parameter, config)
+
+        # TODO: Option.
 
     # Add subparsers to the parser.
     if command.subcommands:
@@ -120,18 +170,3 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             _ = configured(new_subparser(subparsers), subcommand, prefix + '.')
 
     return parser
-
-
-def configuration(parameter: inspect.Parameter) -> Iterable[Tuple[str, Any]]:
-    """Returns an argument configuration for the specified `parameter`."""
-
-    annotation = parameter.annotation
-
-    if annotation is not None and isinstance(annotation, Arg):
-        if annotation.description is not None:
-            yield ('help', annotation.description)
-
-    if parameter.default is not parameter.empty:
-        yield ('default', parameter.default)
-    else:
-        yield ('required', True)

@@ -31,12 +31,15 @@ class CLI:
         """
 
         parser = self.parser or StandardParser(self)
+        args = args if args is not None else sys.argv[1:]
 
         command = self.main
         context = None
 
-        for invoke in parser.parse(args or sys.argv[1:]):
+        for invoke in parser.parse(args):
             command, context = invoke(command, context)
+
+        return context
 
     def command(self, *args, **kwargs):
         """Defines a subcommand.
