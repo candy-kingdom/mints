@@ -14,8 +14,8 @@ class Flag:
     in the short-format.
 
     Attributes:
-        description (str): A description of an argument. Shown in help page.
-        short (str): A short form of an argument.
+        description (str): A description of an flag. Shown in the help page.
+        short (str): A short form of a flag.
             Must be non empty and consist of 1 alphabetic letter.
 
     Examples:

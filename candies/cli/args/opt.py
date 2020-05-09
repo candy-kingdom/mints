@@ -13,18 +13,14 @@ class Opt:
     `--times` is an option with value of `3`.
 
     Attributes:
-        description (str): A description of an argument. Shown in help page.
-        short (str): A short form of an argument.
+        description (str): A description of an option. Shown in the help page.
+        short (str): A short form of an option.
             Must be non empty and consist of 1 alphabetic letter.
 
     Examples:
         # To handle the mentioned above CLI, one could write:
         @cli
-        def git():
-            ...
-
-        @git.command
-        def status(short: Flag('Give the output in the short-format')):
+        def say(phrase: Arg, times: Opt):
             ...
     """
 
