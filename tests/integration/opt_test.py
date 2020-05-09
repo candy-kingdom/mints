@@ -1,4 +1,4 @@
-"""Various tests for `candies.cli.args.flag.Flag`."""
+"""Various tests for `candies.cli.args.opt.Opt`."""
 
 from typing import Callable
 
