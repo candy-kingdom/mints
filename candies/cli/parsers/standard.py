@@ -127,7 +127,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         if not short.isalpha():
             raise ValueError(f"Flag '{parameter.name}' has invalid short name "
                              f"'{short}': "
-                             f"it is not an alphabetic letter")
+                             f"it is not an alphabet character")
 
         return short
 

@@ -13,7 +13,7 @@ class Opt:
     Attributes:
         description (str): A description of an option. Shown in the help page.
         short (str): A short form of an option.
-            Must be non empty and consist of 1 alphabetic letter.
+            Must be non empty and consist of 1 alphabet character.
 
     Examples:
         # To handle the mentioned above CLI, one could write:
