@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, HelpFormatter
-from typing import Iterable, Any, Callable, Type, Dict, Union, Optional
+from typing import Iterable, Any, Callable, Type, Dict, Union, Optional, Tuple
 import inspect
 
 from candies.cli.args.arg import Arg
