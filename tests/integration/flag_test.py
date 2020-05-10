@@ -67,6 +67,19 @@ def test_one_flag_with_default_true():
     assert cx == True
 
 
+def test_one_flag_with_default_int():
+    # Arrange.
+    @cli
+    def main(x: Flag = 5):
+        return x
+
+    # Act.
+    cx = execute(main, with_='--x')
+
+    # Assert.
+    assert isinstance(cx, BaseException)
+
+
 def test_one_flag_not_specified():
     # Arrange.
     @cli
