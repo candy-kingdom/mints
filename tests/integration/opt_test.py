@@ -208,4 +208,4 @@ def test_opt_specified_twice():
     cx = execute(main, with_='--x 1 --x 2')
 
     # Assert.
-    assert cx is '2'
+    assert cx == '2'
