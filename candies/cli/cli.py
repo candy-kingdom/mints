@@ -60,17 +60,13 @@ class CLI:
 
 def cli(func: Optional[Callable] = None,
         name: Optional[str] = None,
-        description: Optional[str] = None,
-        prefixes: Optional[str] = '-') -> Union[Callable, CLI]:
+        description: Optional[str] = None) -> Union[Callable, CLI]:
     """Constructs a `CLI` from the specified function.
 
     Args:
         func: A function to construct a `CLI` from.
         name: A name of the main command.
         description: A description of the main command.
-        prefixes: A string that contains prefixes available for options and
-            flags (default is '-'). For example, a value of '-+` allows
-            writing `--flag`, `++flag`, `-f` or `+f`.
 
     Returns:
         Either an instance of `CLI` if `func` was specified
