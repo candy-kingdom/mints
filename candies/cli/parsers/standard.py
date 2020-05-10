@@ -135,7 +135,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         # TODO: Add more prefixes depending on `prefix` attribute.
         return '-', '--'
 
-    def is_(x: inspect.Parameter, of: Type) -> bool:
+    def is_(x: Any, of: Type) -> bool:
         return isinstance(x, of) or x == of
 
     def configure_arg(x: inspect.Parameter, config: Dict):
