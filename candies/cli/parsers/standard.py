@@ -1,9 +1,10 @@
 from argparse import ArgumentParser, HelpFormatter
-from typing import Iterable, Any, Callable, Type, Dict
+from typing import Iterable, Any, Callable, Type, Dict, Union, Optional, Tuple
 import inspect
 
 from candies.cli.args.arg import Arg
 from candies.cli.args.flag import Flag
+from candies.cli.args.opt import Opt
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser, Invocation
 
@@ -105,25 +106,12 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                  description=command.description,
                  formatter_class=help(command))
 
-    def is_(x: inspect.Parameter, of: type) -> bool:
-        return isinstance(x, of) or x == of
+    def short_of(x: Any) -> Optional[str]:
+        short = getattr(x, 'short', None)
 
-    def configure_arg(x: inspect.Parameter, config: Dict):
-        parser.add_argument(parameter.name,
-                            **config)
-
-    def configure_flag(x: inspect.Parameter, config: Dict):
-        # This actually makes an arg to behave like a flag,
-        # so one could call `--x` instead of `--x y`.
-        config['action'] = 'store_true'
-
-        if parameter.default is parameter.empty:
-            config['default'] = False
-        else:
-            config['default'] = bool(parameter.default)
-
-        short = getattr(parameter.annotation, 'short', None)
-        short = short if short is not None else parameter.name[0]
+        if short is None:
+            # If `None`, then considered as omitted.
+            return short
 
         if short == '':
             raise ValueError(f"Flag '{parameter.name}' has invalid short name "
@@ -138,11 +126,52 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         if not short.isalpha():
             raise ValueError(f"Flag '{parameter.name}' has invalid short name "
                              f"'{short}': "
-                             f"it is not an alphabetic letter")
+                             f"it is not an alphabet character")
 
-        parser.add_argument(f'--{parameter.name}',
-                            f'-{short}',
-                            **config)
+        return short
+
+    def prefixes_of(x: Any) -> Tuple[str, str]:
+        # TODO: Add more prefixes depending on `prefix` attribute.
+        return '-', '--'
+
+    def is_(x: Any, of: Type) -> bool:
+        return isinstance(x, of) or x == of
+
+    def configure_arg(x: inspect.Parameter, config: Dict):
+        parser.add_argument(x.name, **config)
+
+    def configure_named_arg(x: inspect.Parameter, config: Dict):
+        short = short_of(x.annotation)
+        short_prefix, long_prefix = prefixes_of(x.annotation)
+
+        if short is None:
+            parser.add_argument(f'{long_prefix}{x.name}',
+                                **config)
+        else:
+            parser.add_argument(f'{long_prefix}{x.name}',
+                                f'{short_prefix}{short}',
+                                **config)
+
+    def configure_flag(x: inspect.Parameter, config: Dict):
+        # This actually makes an arg to behave like a flag,
+        # so one could call `--x` instead of `--x y`.
+        config['action'] = 'store_true'
+
+        if x.default is x.empty:
+            config['default'] = False
+        else:
+            config['default'] = bool(x.default)
+
+        configure_named_arg(x, config)
+
+    def configure_opt(x: inspect.Parameter, config: Dict):
+        if x.default is not x.empty:
+            config['default'] = x.default
+            config['required'] = False
+        else:
+            config['required'] = True
+
+        configure_named_arg(x, config)
 
     signature = inspect.signature(command.func)
 
@@ -160,7 +189,8 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         if is_(parameter.annotation, Flag):
             configure_flag(parameter, config)
 
-        # TODO: Option.
+        if is_(parameter.annotation, Opt):
+            configure_opt(parameter, config)
 
     # Add subparsers to the parser.
     if command.subcommands:

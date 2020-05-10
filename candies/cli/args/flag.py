@@ -14,9 +14,9 @@ class Flag:
     in the short-format.
 
     Attributes:
-        description (str): A description of an argument. Shown in help page.
-        short (str): A short form of an argument.
-            Must be non empty and consist of 1 letter.
+        description (str): A description of a flag. Shown in the help page.
+        short (str): A short form of a flag.
+            Must be non empty and consist of 1 alphabet character.
 
     Examples:
         # To handle the mentioned above CLI, one could write:

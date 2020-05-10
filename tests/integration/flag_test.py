@@ -210,17 +210,17 @@ def test_one_arg_with_flag_not_specified():
     assert cx == ('1', False)
 
 
-def test_one_flag_with_implicit_short():
+def test_one_flag_without_short():
     # Arrange.
     @cli
     def main(xyz: Flag):
         return xyz
 
     # Act.
-    cx = execute(main, with_='-x')
+    ex = execute(main, with_='-x')
 
     # Assert.
-    assert cx == True
+    assert isinstance(ex, BaseException)
 
 
 def test_one_flag_with_explicit_short():
@@ -249,19 +249,6 @@ def test_one_flag_with_explicit_short_and_description():
     assert cx == True
 
 
-def test_one_flag_with_one_letter_and_implicit_short():
-    # Arrange.
-    @cli
-    def main(x: Flag):
-        return x
-
-    # Act.
-    cx = execute(main, with_='-x')
-
-    # Assert.
-    assert cx == True
-
-
 def test_two_flags_with_same_implicit_shorts():
     # Arrange.
     @cli
@@ -269,10 +256,10 @@ def test_two_flags_with_same_implicit_shorts():
         return xy, xz
 
     # Act.
-    ex = execute(main, with_='--xy --xz')
+    cx = execute(main, with_='--xy --xz')
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert cx == (True, True)
 
 
 def test_two_flags_with_same_explicit_shorts():
@@ -338,3 +325,16 @@ def test_flag_with_sign_short():
 
     # Assert.
     assert isinstance(ex, BaseException)
+
+
+def test_flag_specified_twice():
+    # Arrange.
+    @cli
+    def main(x: Flag):
+        return x
+
+    # Act.
+    cx = execute(main, with_='--x --x')
+
+    # Assert.
+    assert cx is True
