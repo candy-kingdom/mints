@@ -98,9 +98,9 @@ def prefixes(signature: inspect.Signature) -> str:
     params = signature.parameters.values()
     prefixes = map(prefix, params)
     prefixes = filter(prefix_is_one_character, prefixes)
-    prefixes = list(prefixes)
+    prefixes = set(prefixes)
 
-    if prefixes == []:
+    if len(prefixes) == 0:
         return '-'
 
     return ''.join(prefixes)
