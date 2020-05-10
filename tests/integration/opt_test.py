@@ -179,10 +179,10 @@ def test_one_opt_with_implicit_short():
         return xyz
 
     # Act.
-    cx = execute(main, with_='-x 1')
+    ex = execute(main, with_='-x 1')
 
     # Assert.
-    assert cx == '1'
+    assert isinstance(ex, BaseException)
 
 
 def test_one_opt_with_explicit_short():
