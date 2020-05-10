@@ -138,12 +138,12 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
     def is_(x: Any, of: Type) -> bool:
         return isinstance(x, of) or x == of
 
-    def configure_arg(x: inspect.Parameter, type: Type, config: Dict):
+    def configure_arg(x: inspect.Parameter, kind: Any, config: Dict):
         parser.add_argument(x.name, **config)
 
-    def configure_named_arg(x: inspect.Parameter, type: Type, config: Dict):
-        short = short_of(type)
-        short_prefix, long_prefix = prefixes_of(type)
+    def configure_named_arg(x: inspect.Parameter, kind: Any, config: Dict):
+        short = short_of(kind)
+        short_prefix, long_prefix = prefixes_of(kind)
 
         if short is None:
             parser.add_argument(f'{long_prefix}{x.name}',
@@ -153,7 +153,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                                 f'{short_prefix}{short}',
                                 **config)
 
-    def configure_flag(x: inspect.Parameter, type: Type, config: Dict):
+    def configure_flag(x: inspect.Parameter, kind: Any, config: Dict):
         # This actually makes an arg to behave like a flag,
         # so one could call `--x` instead of `--x y`.
         config['action'] = 'store_true'
@@ -166,22 +166,22 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             raise ValueError(f"Expected a `bool` default value for "
                              f"the flag '{x.name}' but got {x.default}.")
 
-        configure_named_arg(x, type, config)
+        configure_named_arg(x, kind, config)
 
-    def configure_opt(x: inspect.Parameter, type: Type, config: Dict):
+    def configure_opt(x: inspect.Parameter, kind: Any, config: Dict):
         if x.default is not x.empty:
             config['default'] = x.default
             config['required'] = False
         else:
             config['required'] = True
 
-        configure_named_arg(x, type, config)
+        configure_named_arg(x, kind, config)
 
     signature = inspect.signature(command.func)
 
     # Add parameters to the parser.
     for parameter in signature.parameters.values():
-        if parameter.annotation is None:
+        if parameter.annotation is parameter.default:
             raise ValueError(f"Parameter '{parameter.name}' "
                              f"must have annotation.")
 
@@ -205,18 +205,18 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                 config['type'] = type
 
         if isinstance(parameter.annotation, Typed):
-            type = parameter.annotation.kind
+            kind = parameter.annotation.kind
         else:
-            type = parameter.annotation
+            kind = parameter.annotation
 
-        if is_(type, Arg):
-            configure_arg(parameter, type, config)
+        if is_(kind, Arg):
+            configure_arg(parameter, kind, config)
 
-        if is_(type, Flag):
-            configure_flag(parameter, type, config)
+        if is_(kind, Flag):
+            configure_flag(parameter, kind, config)
 
-        if is_(type, Opt):
-            configure_opt(parameter, type, config)
+        if is_(kind, Opt):
+            configure_opt(parameter, kind, config)
 
     # Add subparsers to the parser.
     if command.subcommands:
