@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, HelpFormatter
-from typing import Iterable, Any, Callable, Type, Dict, Optional, Tuple
+from typing import Iterable, Any, Callable, Type, Dict, Optional, Tuple, TypeVar
 import inspect
 
 from candies.cli.args.arg import Arg
@@ -193,9 +193,16 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
 
         type = getattr(parameter.annotation, 'type', None)
         if type is not None:
-            config['type'] = type
+            if getattr(type, '__origin__', None) is list:
+                arg, = type.__args__
 
-        # TODO: Add support for `List[T]` annotations.
+                config['nargs'] = '*'
+                config['type'] = str if isinstance(arg, TypeVar) else arg
+            elif type is list:
+                config['nargs'] = '*'
+                config['type'] = str
+            else:
+                config['type'] = type
 
         if isinstance(parameter.annotation, Typed):
             type = parameter.annotation.kind
