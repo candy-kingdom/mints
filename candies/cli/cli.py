@@ -1,5 +1,6 @@
+import inspect
 import sys
-from typing import Callable, Optional, Union, Iterable
+from typing import Callable, Optional, Union, Iterable, Any
 
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser
@@ -13,11 +14,14 @@ class CLI:
         main: A main command to execute.
         parser: A parser to parse command line arguments with
             (`candies.cli.parsers.StandardParser` if not specified).
+        parsers: A dictionary that contains parsers for custom types.
+            Maps a custom to a parser itself.
     """
 
     def __init__(self, main: Command, parser: Optional[Parser] = None):
         self.main = main
         self.parser = parser
+        self.parsers = {}
 
     def __call__(self, args: Optional[Iterable[str]] = None):
         """Parses the command line arguments and executes the command.
@@ -56,6 +60,44 @@ class CLI:
         for more details.
         """
         return self.main.help(*args, **kwargs)
+
+    def parse(self, func: Callable[[str], Any]) -> Callable[[str], Any]:
+        """Defines a parser for a custom type.
+
+        Args:
+            func: A function that parses a custom type from a string.
+
+        Examples:
+            @cli
+            def add(money: Arg[Money]):
+                ...
+
+            @cli.parse
+            def money(x: str) -> Money:
+                if x[0] == '$':
+                    return Money(float(x[1:]), 'dollars')
+                ...
+        """
+
+        signature = inspect.signature(func)
+
+        if len(signature.parameters) != 1:
+            raise ValueError(f"Expected a parser function '{func.__name__}' "
+                             f"to have a single parameter.")
+
+        type = signature.return_annotation
+
+        if type is signature.empty:
+            raise ValueError(f"Expected a parser function '{func.__name__}' "
+                             f"to have a return annotation.")
+        if type in self.parsers:
+            raise ValueError(f"A parser function for the type '{type}' "
+                             f"has already been added (namely "
+                             f"'{self.parsers[type].__name__}').")
+
+        self.parsers[type] = func
+
+        return func
 
 
 def cli(func: Optional[Callable] = None,

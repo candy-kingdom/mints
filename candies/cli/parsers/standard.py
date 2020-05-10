@@ -37,7 +37,7 @@ class StandardParser(Parser):
         self.cli = cli
 
     def parse(self, args: Iterable[str]) -> Iterable[Invocation]:
-        parser = configured(new_parser, self.cli.main)
+        parser = configured(new_parser, self.cli.main, self.cli.parsers)
 
         args = parser.parse_args(list(args))
         args = args.__dict__
@@ -88,7 +88,10 @@ def new_subparser(subparsers: Any) -> Callable[[Any], ArgumentParser]:
     return subparsers.add_parser
 
 
-def configured(new: Callable, command: Command, prefix: str = '.') \
+def configured(new: Callable,
+               command: Command,
+               parsers: Dict[Type, Callable],
+               prefix: str = '.') \
         -> ArgumentParser:
     """Configures an `argparse.ArgumentParser` from the specified `command`.
 
@@ -204,6 +207,10 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             else:
                 config['type'] = type
 
+            # Override the conversion.
+            if config['type'] in parsers:
+                config['type'] = parsers[config['type']]
+
         if isinstance(parameter.annotation, Typed):
             kind = parameter.annotation.kind
         else:
@@ -223,6 +230,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         subparsers = parser.add_subparsers(dest=prefix + 'command')
 
         for name, subcommand in command.subcommands.items():
-            _ = configured(new_subparser(subparsers), subcommand, prefix + '.')
+            _ = configured(new_subparser(subparsers), subcommand,
+                           parsers, prefix + '.')
 
     return parser
