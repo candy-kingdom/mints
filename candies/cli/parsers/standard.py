@@ -106,7 +106,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                  description=command.description,
                  formatter_class=help(command))
 
-    def short_of(x: Union[Type, Any]) -> Optional[str]:
+    def short_of(x: Any) -> Optional[str]:
         short = getattr(x, 'short', None)
 
         if short is None:
@@ -131,7 +131,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
 
         return short
 
-    def prefixes_of(x: Union[Type, Any]) -> Optional[str]:
+    def prefixes_of(x: Any) -> Optional[str]:
         # TODO: Add more prefixes depending on `prefix` attribute.
         return '-', '--'
 
