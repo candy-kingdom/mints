@@ -182,8 +182,8 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
     # Add parameters to the parser.
     for parameter in signature.parameters.values():
         if parameter.annotation is parameter.default:
-            raise ValueError(f"Parameter '{parameter.name}' "
-                             f"must have annotation.")
+            raise ValueError(f"The parameter '{parameter.name}' "
+                             f"must have an annotation.")
 
         config = {}
 
