@@ -11,9 +11,14 @@ class Opt:
     `--times` is an option with value of `3`.
 
     Attributes:
-        description (str): A description of an option. Shown in the help page.
-        short (str): A short form of an option.
+        description: A description of an option. Shown in the help page.
+        short: A short form of an option.
             Must be non empty and consist of 1 alphabet character.
+        prefix: A string that represents a prefix of a flag.
+            It should contain only 1 character.
+            For example, a value of `+` will allow `++value 2` and `+v 2`
+            notation.
+            Default is '-'.
 
     Examples:
         # To handle the mentioned above CLI, one could write:

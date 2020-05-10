@@ -10,6 +10,10 @@ class Command:
             (`func.__name__` if not explicitly specified).
         description: A description of the command
             (`func.__doc__` if not explicitly specified).
+        prefixes: A string that contains prefixes available for options and
+            flags (default is '-') in this command.
+            For example, a value of '-+` allows
+            writing `--flag`, `++flag`, `-f` or `+f`.
         subcommands: A dictionary that maps a subcommand name
             to the subcommand itself.
 

@@ -77,6 +77,34 @@ def help(command: Command) -> Type[HelpFormatter]:
     return Help
 
 
+def prefixes(signature: inspect.Signature) -> str:
+    """Constructs a prefixes string for a `command`.
+
+    For example, if `command.func` has `Opt(prefix='/')` and `Opt(prefix='+')`
+    in signature, then the resulting string would be `/+`.
+    """
+
+    def prefix(x: inspect.Parameter) -> str:
+        if isinstance(x.annotation, type):
+            # This allows writing `x: Flag` and expect `--x` to be parsed.
+            return '-'
+        else:
+            return getattr(x.annotation, 'prefix', None)
+
+    def prefix_is_one_character(x: str) -> bool:
+        return x is not None and len(x) == 1
+
+    params = signature.parameters.values()
+    prefixes = map(prefix, params)
+    prefixes = filter(prefix_is_one_character, prefixes)
+    prefixes = list(prefixes)
+
+    if prefixes == []:
+        return '-'
+
+    return ''.join(prefixes)
+
+
 def new_parser(*args, **kwargs) -> ArgumentParser:
     """Creates a new parser."""
     return ArgumentParser(*args, **kwargs)
@@ -102,9 +130,11 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         {'.command': 'tool', '..command': 'install', 'g': 'something'}.
     """
 
+    signature = inspect.signature(command.func)
     parser = new(command.name,
                  description=command.description,
-                 formatter_class=help(command))
+                 formatter_class=help(command),
+                 prefix_chars=prefixes(signature))
 
     def short_of(x: Any) -> Optional[str]:
         short = getattr(x, 'short', None)
@@ -114,25 +144,40 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             return short
 
         if short == '':
-            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{parameter.name}' has invalid short name "
                              f"'{short}': "
                              f"it is an empty string")
 
         if len(short) > 1:
-            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{parameter.name}' has invalid short name "
                              f"'{short}': "
                              f"it consists of more than one character")
 
         if not short.isalpha():
-            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{parameter.name}' has invalid short name "
                              f"'{short}': "
                              f"it is not an alphabet character")
 
         return short
 
     def prefixes_of(x: Any) -> Tuple[str, str]:
-        # TODO: Add more prefixes depending on `prefix` attribute.
-        return '-', '--'
+        prefix = getattr(x, 'prefix', None)
+
+        if prefix is None:
+            # Default prefixes.
+            return '-', '--'
+
+        if prefix == '':
+            raise ValueError(f"Argument '{parameter.name}' has invalid prefix "
+                             f"'{prefix}': "
+                             f"it is an empty string")
+
+        if len(prefix) > 1:
+            raise ValueError(f"Argument '{parameter.name}' has invalid prefix "
+                             f"'{prefix}': "
+                             f"it consists of more than one character")
+
+        return prefix, prefix * 2
 
     def is_(x: Any, of: Type) -> bool:
         return isinstance(x, of) or x == of
@@ -172,8 +217,6 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             config['required'] = True
 
         configure_named_arg(x, config)
-
-    signature = inspect.signature(command.func)
 
     # Add parameters to the parser.
     for parameter in signature.parameters.values():

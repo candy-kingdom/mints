@@ -338,3 +338,151 @@ def test_flag_specified_twice():
 
     # Assert.
     assert cx is True
+
+
+def test_flag_with_custom_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='+')):
+        return x
+
+    # Act.
+    cx = execute(main, with_='++x')
+
+    # Assert.
+    assert cx == True
+
+
+def test_flag_with_custom_prefix_and_short():
+    # Arrange.
+    @cli
+    def main(xyz: Flag(short='x', prefix='+')):
+        return xyz
+
+    # Act.
+    cx = execute(main, with_='+x')
+
+    # Assert.
+    assert cx is True
+
+
+def test_flag_with_custom_but_default_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='-')):
+        return x
+
+    # Act.
+    cx = execute(main, with_='--x')
+
+    # Assert.
+    assert cx == True
+
+
+def test_flag_with_letter_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='a')):
+        return x
+
+    # Act.
+    cx = execute(main, with_='aax')
+
+    # Assert.
+    assert cx is True
+
+
+def test_flag_with_empty_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='')):
+        return x
+
+    # Act.
+    ex = execute(main, with_='x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
+
+
+def test_flag_with_none_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix=None)):
+        return x
+
+    # Act.
+    ex = execute(main, with_='x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
+
+
+def test_flag_with_long_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='--')):
+        return x
+
+    # Act.
+    ex = execute(main, with_='----x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
+
+
+def test_flag_specified_with_wrong_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='+')):
+        return x
+
+    # Act.
+    ex = execute(main, with_='--x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
+
+
+def test_two_flags_and_one_with_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='+'), y: Flag):
+        return x, y
+
+    # Act.
+    cx = execute(main, with_='++x --y')
+
+    # Assert.
+    assert cx == (True, True)
+
+
+def test_two_flags_with_same_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix='+'), y: Flag(prefix='+')):
+        return x, y
+
+    # Act.
+    cx = execute(main, with_='++x ++y')
+
+    # Assert.
+    assert cx == (True, True)
+
+
+def test_flag_of_subcommand_with_custom_prefix():
+    # Arrange.
+    @cli
+    def main():
+        ...
+
+    @main.command
+    def sub(x: Flag(prefix='+')):
+        return x
+
+    # Act.
+    cx = execute(main, with_='sub ++x')
+
+    # Assert.
+    assert cx == True
+
