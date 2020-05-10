@@ -27,6 +27,19 @@ def test_no_arguments():
     assert cx
 
 
+def test_argument_without_annotation():
+    # Arrange.
+    @cli
+    def main(x):
+        return x
+
+    # Act.
+    cx = execute(main, with_='whatever')
+
+    # Assert.
+    assert isinstance(cx, ValueError)
+
+
 def test_one_arg():
     # Arrange.
     @cli
