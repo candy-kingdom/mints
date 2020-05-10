@@ -1,3 +1,8 @@
+from typing import Type
+
+from candies.cli.args.typed import Typed
+
+
 class Arg:
     """A positional argument of a command line.
 
@@ -29,3 +34,6 @@ class Arg:
 
     def __init__(self, description: str = None):
         self.description = description
+
+    def __class_getitem__(cls, type: Type) -> Typed:
+        return Typed(cls, type)

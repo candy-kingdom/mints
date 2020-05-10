@@ -1,10 +1,11 @@
 from argparse import ArgumentParser, HelpFormatter
-from typing import Iterable, Any, Callable, Type, Dict, Union, Optional, Tuple
+from typing import Iterable, Any, Callable, Type, Dict, Optional, Tuple
 import inspect
 
 from candies.cli.args.arg import Arg
 from candies.cli.args.flag import Flag
 from candies.cli.args.opt import Opt
+from candies.cli.args.typed import Typed
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser, Invocation
 
@@ -137,12 +138,12 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
     def is_(x: Any, of: Type) -> bool:
         return isinstance(x, of) or x == of
 
-    def configure_arg(x: inspect.Parameter, config: Dict):
+    def configure_arg(x: inspect.Parameter, type: Type, config: Dict):
         parser.add_argument(x.name, **config)
 
-    def configure_named_arg(x: inspect.Parameter, config: Dict):
-        short = short_of(x.annotation)
-        short_prefix, long_prefix = prefixes_of(x.annotation)
+    def configure_named_arg(x: inspect.Parameter, type: Type, config: Dict):
+        short = short_of(type)
+        short_prefix, long_prefix = prefixes_of(type)
 
         if short is None:
             parser.add_argument(f'{long_prefix}{x.name}',
@@ -152,7 +153,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                                 f'{short_prefix}{short}',
                                 **config)
 
-    def configure_flag(x: inspect.Parameter, config: Dict):
+    def configure_flag(x: inspect.Parameter, type: Type, config: Dict):
         # This actually makes an arg to behave like a flag,
         # so one could call `--x` instead of `--x y`.
         config['action'] = 'store_true'
@@ -162,35 +163,50 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         else:
             config['default'] = bool(x.default)
 
-        configure_named_arg(x, config)
+        configure_named_arg(x, type, config)
 
-    def configure_opt(x: inspect.Parameter, config: Dict):
+    def configure_opt(x: inspect.Parameter, type: Type, config: Dict):
         if x.default is not x.empty:
             config['default'] = x.default
             config['required'] = False
         else:
             config['required'] = True
 
-        configure_named_arg(x, config)
+        configure_named_arg(x, type, config)
 
     signature = inspect.signature(command.func)
 
     # Add parameters to the parser.
     for parameter in signature.parameters.values():
+        if parameter.annotation is None:
+            raise ValueError(f"Parameter '{parameter.name}' "
+                             f"must have annotation.")
+
         config = {}
 
         description = getattr(parameter.annotation, 'description', None)
         if description is not None:
             config['help'] = description
 
-        if is_(parameter.annotation, Arg):
-            configure_arg(parameter, config)
+        type = getattr(parameter.annotation, 'type', None)
+        if type is not None:
+            config['type'] = type
 
-        if is_(parameter.annotation, Flag):
-            configure_flag(parameter, config)
+        # TODO: Add support for `List[T]` annotations.
 
-        if is_(parameter.annotation, Opt):
-            configure_opt(parameter, config)
+        if isinstance(parameter.annotation, Typed):
+            type = parameter.annotation.kind
+        else:
+            type = parameter.annotation
+
+        if is_(type, Arg):
+            configure_arg(parameter, type, config)
+
+        if is_(type, Flag):
+            configure_flag(parameter, type, config)
+
+        if is_(type, Opt):
+            configure_opt(parameter, type, config)
 
     # Add subparsers to the parser.
     if command.subcommands:

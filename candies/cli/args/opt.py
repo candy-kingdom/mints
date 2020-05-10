@@ -1,3 +1,8 @@
+from typing import Type
+
+from candies.cli.args.typed import Typed
+
+
 class Opt:
     """A command line argument that represents an option.
 
@@ -25,3 +30,6 @@ class Opt:
     def __init__(self, description: str = None, short: str = None):
         self.description = description
         self.short = short
+
+    def __class_getitem__(cls, type: Type) -> Typed:
+        return Typed(cls, type)
