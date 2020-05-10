@@ -42,6 +42,7 @@ class Typed:
         if isinstance(self.kind, type):
             self.kind = self.kind(*args, **kwargs)
         else:
-            raise ValueError(f'Cannot instantiate {type(self.kind)} twice.')
+            raise ValueError(f"Cannot instantiate {type(self.kind)} twice: it"
+                             f"is already instantiated as {repr(self.kind)}.")
 
         return self
