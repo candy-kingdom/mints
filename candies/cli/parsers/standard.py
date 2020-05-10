@@ -131,7 +131,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
 
         return short
 
-    def prefixes_of(x: Any) -> Optional[str]:
+    def prefixes_of(x: Any) -> Tuple[str, str]:
         # TODO: Add more prefixes depending on `prefix` attribute.
         return '-', '--'
 
