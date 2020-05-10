@@ -137,44 +137,43 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
                  formatter_class=help(command),
                  prefix_chars=prefixes(signature))
 
-    def short_of(x: Any) -> Optional[str]:
-        short = getattr(x, 'short', None)
+    def short_of(x: inspect.Parameter, kind: Any) -> Optional[str]:
+        short = getattr(kind, 'short', None)
 
         if short is None:
             # If `None`, then considered as omitted.
             return short
 
         if short == '':
-            raise ValueError(f"Argument '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has invalid short name "
                              f"'{short}': "
                              f"it is an empty string")
 
         if len(short) > 1:
-            raise ValueError(f"Argument '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has invalid short name "
                              f"'{short}': "
                              f"it consists of more than one character")
 
         if not short.isalpha():
-            raise ValueError(f"Argument '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has invalid short name "
                              f"'{short}': "
                              f"it is not an alphabet character")
 
         return short
 
-    def prefixes_of(x: Any) -> Tuple[str, str]:
-        prefix = getattr(x, 'prefix', None)
+    def prefixes_of(x: inspect.Parameter, kind: Any) -> Tuple[str, str]:
+        prefix = getattr(kind, 'prefix', None)
 
         if prefix is None:
-            # Default prefixes.
             return '-', '--'
 
         if prefix == '':
-            raise ValueError(f"Argument '{parameter.name}' has invalid prefix "
+            raise ValueError(f"Argument '{x.name}' has invalid prefix "
                              f"'{prefix}': "
                              f"it is an empty string")
 
         if len(prefix) > 1:
-            raise ValueError(f"Argument '{parameter.name}' has invalid prefix "
+            raise ValueError(f"Argument '{x.name}' has invalid prefix "
                              f"'{prefix}': "
                              f"it consists of more than one character")
 
@@ -187,8 +186,8 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         parser.add_argument(x.name, **config)
 
     def configure_named_arg(x: inspect.Parameter, kind: Any, config: Dict):
-        short = short_of(kind)
-        short_prefix, long_prefix = prefixes_of(kind)
+        short = short_of(x, kind)
+        short_prefix, long_prefix = prefixes_of(x, kind)
 
         if short is None:
             parser.add_argument(f'{long_prefix}{x.name}',

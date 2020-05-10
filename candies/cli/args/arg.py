@@ -36,4 +36,5 @@ class Arg:
         self.description = description
 
     def __class_getitem__(cls, type: Type) -> Typed:
+        print('12333333333')
         return Typed(cls, type)
