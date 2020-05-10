@@ -457,6 +457,19 @@ def test_flag_specified_with_wrong_prefix():
     assert isinstance(ex, BaseException)
 
 
+def test_flag_with_non_string_prefix():
+    # Arrange.
+    @cli
+    def main(x: Flag(prefix=[1])):
+        return x
+
+    # Act.
+    ex = execute(main, with_='--x')
+
+    # Assert.
+    assert isinstance(ex, BaseException)
+
+
 def test_two_flags_and_one_with_prefix():
     # Arrange.
     @cli
@@ -498,4 +511,3 @@ def test_flag_of_subcommand_with_custom_prefix():
 
     # Assert.
     assert cx == True
-
