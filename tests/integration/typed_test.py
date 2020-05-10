@@ -174,6 +174,28 @@ def test_arg_typed_with_list_of_custom_type():
     assert cx == [Money(100, 'dollars'), Money(200, 'dollars')]
 
 
+def test_parse_with_type():
+    # Arrange.
+    class Example:
+        def __init__(self, value: Any):
+            self.value = value
+
+        def __eq__(self, other):
+            return isinstance(other, Example) and self.value == other.value
+
+    @cli
+    def main(x: Arg[Example]):
+        return x
+
+    main.parse(Example)
+
+    # Act.
+    cx = execute(main, with_='10')
+
+    # Assert.
+    assert cx == Example('10')
+
+
 def test_arg_typed_with_unsupported_type():
     # Arrange.
     @cli
@@ -231,3 +253,6 @@ def test_parse_with_duplicate_parser_function():
         @main.parse
         def b(x: str) -> Example:
             pass
+
+    with pytest.raises(ValueError, match="namely 'a'"):
+        main.parse(Example)

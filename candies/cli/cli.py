@@ -1,6 +1,6 @@
 import inspect
 import sys
-from typing import Callable, Optional, Union, Iterable, Any
+from typing import Callable, Optional, Union, Iterable, Any, Type
 
 from candies.cli.command import Command
 from candies.cli.parsers.parser import Parser
@@ -61,43 +61,59 @@ class CLI:
         """
         return self.main.help(*args, **kwargs)
 
-    def parse(self, func: Callable[[str], Any]) -> Callable[[str], Any]:
+    def parse(self, callable: Union[Callable[[str], Any], Type]) \
+            -> Union[Type, Callable[[str], Any]]:
         """Defines a parser for a custom type.
 
         Args:
-            func: A function that parses a custom type from a string.
+            callable: A callable that converts a string to an instance
+                of a custom type. For example, a parser function or a
+                type that accepts a string to a constructor.
 
         Examples:
             @cli
             def add(money: Arg[Money]):
                 ...
 
-            @cli.parse
+            @main.parse
             def money(x: str) -> Money:
                 if x[0] == '$':
                     return Money(float(x[1:]), 'dollars')
                 ...
+
+            # Or, as an alternative, if
+            # `Money.__init__(str)` can be called.
+            main.parse(Money)
         """
 
-        signature = inspect.signature(func)
+        if isinstance(callable, type):
+            type_ = callable
+        else:
+            signature = inspect.signature(callable)
 
-        if len(signature.parameters) != 1:
-            raise ValueError(f"Expected a parser function '{func.__name__}' "
-                             f"to have a single parameter.")
+            if len(signature.parameters) != 1:
+                raise ValueError(f"Expected a parser function "
+                                 f"'{callable.__name__}' "
+                                 f"to have a single parameter.")
 
-        type = signature.return_annotation
+            type_ = signature.return_annotation
 
-        if type is signature.empty:
-            raise ValueError(f"Expected a parser function '{func.__name__}' "
-                             f"to have a return annotation.")
-        if type in self.parsers:
-            raise ValueError(f"A parser function for the type '{type}' "
-                             f"has already been added (namely "
-                             f"'{self.parsers[type].__name__}').")
+            if type_ is signature.empty:
+                raise ValueError(f"Expected a parser function "
+                                 f"'{callable.__name__}' "
+                                 f"to have a return annotation.")
 
-        self.parsers[type] = func
+        if type_ in self.parsers:
+            name = getattr(self.parsers[type_], '__name__', None)
+            name = name or str(type(self.parsers[type_]))
 
-        return func
+            raise ValueError(f"A parser for the type '{type_}' "
+                             f"has already been added "
+                             f"(namely '{name}').")
+
+        self.parsers[type_] = callable
+
+        return callable
 
 
 def cli(func: Optional[Callable] = None,
