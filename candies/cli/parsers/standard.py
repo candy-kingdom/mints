@@ -79,10 +79,10 @@ def help(command: Command) -> Type[HelpFormatter]:
 
 
 def prefixes(signature: inspect.Signature) -> str:
-    """Constructs a prefixes string for a `command`.
+    """Constructs a prefixes string for a `signature`.
 
-    For example, if `command.func` has `Opt(prefix='/')` and `Opt(prefix='+')`
-    in signature, then the resulting string would be `/+`.
+    For example, if `signature` has `Opt(prefix='/')` and `Opt(prefix='+')`
+    arguments, then the resulting string would be `/+`.
     """
 
     def prefix(x: inspect.Parameter) -> str:
