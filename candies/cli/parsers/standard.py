@@ -160,8 +160,11 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
 
         if x.default is x.empty:
             config['default'] = False
+        elif isinstance(x.default, bool):
+            config['default'] = x.default
         else:
-            config['default'] = bool(x.default)
+            raise ValueError(f"Expected a `bool` default value for "
+                             f"the flag '{x.name}' but got {x.default}.")
 
         configure_named_arg(x, type, config)
 
