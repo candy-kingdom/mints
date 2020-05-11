@@ -104,10 +104,7 @@ def prefixes(signature: inspect.Signature) -> str:
     prefixes = map(prefix_of, params)
     prefixes = set(prefixes)
 
-    if len(prefixes) == 0:
-        return '-'
-
-    return ''.join(prefixes)
+    return ''.join(prefixes) or '-'
 
 
 def new_parser(*args, **kwargs) -> ArgumentParser:
