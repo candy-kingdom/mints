@@ -94,8 +94,8 @@ class CLI:
             -> Union[Type, Callable[[str], Any]]:
         """Adds a parser for a custom type.
 
-        When a function is provided, this method inspects it and considers
-        its return type annotation the custom type to add a parser for.
+        When a function is provided, this method inspects it and treats
+        its return type annotation as the custom type to add a parser for.
 
         Args:
             callable: Either a parser function or a type.
