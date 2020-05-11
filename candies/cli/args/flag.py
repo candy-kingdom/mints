@@ -19,7 +19,7 @@ class Flag:
             Must be non empty and consist of 1 alphabet character.
         prefix: A string that represents a prefix of a flag.
             It should contain only 1 character.
-            For example, a value of `+` will allow `++flag` and `+f` notation.
+            For example, a value of `+` allows `++flag` and `+f` notation.
             Default is '-'.
 
     Examples:

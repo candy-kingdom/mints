@@ -21,7 +21,7 @@ class Opt:
             Must be non empty and consist of 1 alphabet character.
         prefix: A string that represents a prefix of an option.
             It should contain only 1 character.
-            For example, a value of `+` will allow `++value 2` and `+v 2`
+            For example, a value of `+` allows `++value 2` and `+v 2`
             notation.
             Default is '-'.
 
