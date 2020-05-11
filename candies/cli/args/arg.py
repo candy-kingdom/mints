@@ -23,7 +23,7 @@ class Arg:
         for more details about which kinds of CLIs the `Arg` produces.
 
     Attributes:
-        description (str): A description of an argument. Shown in help page.
+        description: A description of an argument. Shown in help page.
 
     Examples:
         @cli

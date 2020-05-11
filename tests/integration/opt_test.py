@@ -209,3 +209,16 @@ def test_opt_specified_twice():
 
     # Assert.
     assert cx == '2'
+
+
+def test_opt_with_custom_prefix():
+    # Arrange.
+    @cli
+    def main(x: Opt(prefix='+')):
+        return x
+
+    # Act.
+    cx = execute(main, with_='++x 1')
+
+    # Assert.
+    assert cx == '1'
