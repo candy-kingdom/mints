@@ -192,7 +192,7 @@ def configured(new: Callable,
 
         description = getattr(parameter.annotation, 'description', None)
         if description is not None:
-            config['help'] = description
+            config['help'] = description.strip()
 
         type = getattr(parameter.annotation, 'type', None)
         if type is not None:
