@@ -192,3 +192,16 @@ def test_help_for_argument_with_whitespace_description():
 
     # Assert.
     assert output.text.startswith('usage: main')
+
+
+def test_help_for_argument_with_newline_description():
+    # Arrange.
+    @cli
+    def main(x: Arg('\n\n\n\n')):
+        pass
+
+    # Act.
+    output = execute(main, with_='--help')
+
+    # Assert.
+    assert output.text.startswith('usage: main')
