@@ -145,17 +145,17 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             return short
 
         if short == '':
-            raise ValueError(f"Argument '{x.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has an invalid short name "
                              f"'{short}': "
                              f"it is an empty string")
 
         if len(short) > 1:
-            raise ValueError(f"Argument '{x.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has an invalid short name "
                              f"'{short}': "
                              f"it consists of more than one character")
 
         if not short.isalpha():
-            raise ValueError(f"Argument '{x.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has an invalid short name "
                              f"'{short}': "
                              f"it is not an alphabet character")
 
@@ -168,12 +168,12 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
             return '-', '--'
 
         if prefix == '':
-            raise ValueError(f"Argument '{x.name}' has invalid prefix "
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
                              f"'{prefix}': "
                              f"it is an empty string")
 
         if len(prefix) > 1:
-            raise ValueError(f"Argument '{x.name}' has invalid prefix "
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
                              f"'{prefix}': "
                              f"it consists of more than one character")
 
