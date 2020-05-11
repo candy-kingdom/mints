@@ -86,18 +86,22 @@ def prefixes(signature: inspect.Signature) -> str:
     """
 
     def prefix(x: inspect.Parameter) -> str:
-        if isinstance(x.annotation, type):
-            # This allows writing `x: Flag` and expect `--x` to be parsed.
-            return '-'
-        else:
-            return getattr(x.annotation, 'prefix', None)
+        prefix = getattr(x.annotation, 'prefix', '-')
 
-    def prefix_is_one_character(x: str) -> bool:
-        return x is not None and len(x) == 1
+        if prefix == '':
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
+                             f"'{prefix}': "
+                             f"it is an empty string")
+
+        if len(prefix) > 1:
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
+                             f"'{prefix}': "
+                             f"it consists of more than one character")
+
+        return prefix
 
     params = signature.parameters.values()
     prefixes = map(prefix, params)
-    prefixes = filter(prefix_is_one_character, prefixes)
     prefixes = set(prefixes)
 
     if len(prefixes) == 0:
@@ -162,20 +166,7 @@ def configured(new: Callable, command: Command, prefix: str = '.') \
         return short
 
     def prefixes_of(x: inspect.Parameter, kind: Any) -> Tuple[str, str]:
-        prefix = getattr(kind, 'prefix', None)
-
-        if prefix is None:
-            return '-', '--'
-
-        if prefix == '':
-            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
-                             f"'{prefix}': "
-                             f"it is an empty string")
-
-        if len(prefix) > 1:
-            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
-                             f"'{prefix}': "
-                             f"it consists of more than one character")
+        prefix = getattr(kind, 'prefix', '-')
 
         return prefix, prefix * 2
 

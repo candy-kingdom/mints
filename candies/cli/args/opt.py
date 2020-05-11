@@ -32,9 +32,10 @@ class Opt:
             ...
     """
 
-    def __init__(self, description: str = None, short: str = None):
+    def __init__(self, description: str = None, short: str = None, prefix: str = '-'):
         self.description = description
         self.short = short
+        self.prefix = prefix
 
     def __class_getitem__(cls, type: Type) -> Typed:
         return Typed(cls, type)
