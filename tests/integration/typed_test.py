@@ -4,6 +4,23 @@ from candies.cli.args.arg import Arg
 from candies.cli.args.opt import Opt
 from candies.cli.cli import cli
 
+import pytest
+
+
+class Money:
+    def __init__(self, value: float, currency: str):
+        self.value = value
+        self.currency = currency
+
+    def __eq__(self, other):
+        return isinstance(other, Money) \
+               and self.value == other.value \
+               and self.currency == other.currency
+
+    @staticmethod
+    def dollars(value: float):
+        return Money(value, 'dollars')
+
 
 def execute(cli_: Callable, with_: str) -> Any:
     try:
@@ -119,3 +136,140 @@ def test_args_and_opts_typed_with_lists():
 
     # Assert.
     assert cx == (1, [2, 3], [4, 5])
+
+
+def test_arg_typed_with_custom_type():
+    # Arrange.
+    @cli
+    def main(add: Opt[Money]):
+        return add
+
+    @main.parse
+    def money(x: str) -> Money:
+        if x.startswith('$'):
+            return Money.dollars(float(x[1:]))
+
+    # Act.
+    cx = execute(main, with_='--add $500')
+
+    # Assert.
+    assert cx == Money(500, 'dollars')
+
+
+def test_arg_typed_with_list_of_custom_type():
+    # Arrange.
+    @cli
+    def main(add: Opt[List[Money]]):
+        return add
+
+    @main.parse
+    def money(x: str) -> Money:
+        if x.startswith('$'):
+            return Money.dollars(float(x[1:]))
+
+    # Act.
+    cx = execute(main, with_='--add $100 $200')
+
+    # Assert.
+    assert cx == [Money(100, 'dollars'), Money(200, 'dollars')]
+
+
+def test_arg_typed_with_unsupported_type():
+    # Arrange.
+    @cli
+    def main(add: Opt[Money]):
+        return add
+
+    # Act.
+    cx = execute(main, with_='--add $500')
+
+    # Assert.
+    assert isinstance(cx, BaseException)
+
+
+def test_arg_typed_with_list_of_unsupported_types():
+    # Arrange.
+    @cli
+    def main(add: Opt[List[Money]]):
+        return add
+
+    # Act.
+    cx = execute(main, with_='--add $100 $200')
+
+    # Assert.
+    assert isinstance(cx, BaseException)
+
+
+def test_parse_with_unannotated_parser_function():
+    # Arrange.
+    @cli
+    def main():
+        pass
+
+    # Act & Assert.
+    with pytest.raises(ValueError):
+        @main.parse
+        def something(x: str):
+            pass
+
+
+def test_parse_with_duplicate_parser_function():
+    # Arrange.
+    @cli
+    def main():
+        pass
+
+    class Example:
+        pass
+
+    # Act & Assert.
+    @main.parse
+    def a(x: str) -> Example:
+        pass
+
+    with pytest.raises(ValueError, match="namely 'a'"):
+        @main.parse
+        def b(x: str) -> Example:
+            pass
+
+
+def test_add_parser_with_type():
+    # Arrange.
+    class Example:
+        def __init__(self, value: Any):
+            self.value = value
+
+        def __eq__(self, other):
+            return isinstance(other, Example) and self.value == other.value
+
+    @cli
+    def main(x: Arg[Example]):
+        return x
+
+    main.add_parser(Example)
+
+    # Act.
+    cx = execute(main, with_='10')
+
+    # Assert.
+    assert cx == Example('10')
+
+
+def test_add_parser_with_duplicate_type():
+    # Arrange.
+    class Example:
+        def __init__(self, value: Any):
+            self.value = value
+
+        def __eq__(self, other):
+            return isinstance(other, Example) and self.value == other.value
+
+    @cli
+    def main(x: Arg[Example]):
+        return x
+
+    # Act & Assert.
+    main.add_parser(Example)
+
+    with pytest.raises(ValueError, match="namely 'Example'"):
+        main.add_parser(Example)
