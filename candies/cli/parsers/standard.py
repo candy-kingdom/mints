@@ -192,6 +192,8 @@ def configured(new: Callable,
 
         description = getattr(parameter.annotation, 'description', None)
         if description is not None:
+            # Here `strip` addresses an issue:
+            # https://bugs.python.org/issue38584.
             config['help'] = description.strip()
 
         type = getattr(parameter.annotation, 'type', None)
