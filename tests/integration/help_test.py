@@ -179,3 +179,29 @@ def test_custom_help_for_subcommand():
     # Assert.
     assert output_a.text.startswith('usage: main')
     assert output_b.text == 'sub'
+
+
+def test_help_for_argument_with_whitespace_description():
+    # Arrange.
+    @cli
+    def main(x: Arg(' ')):
+        pass
+
+    # Act.
+    output = execute(main, with_='--help')
+
+    # Assert.
+    assert output.text.startswith('usage: main')
+
+
+def test_help_for_argument_with_newline_description():
+    # Arrange.
+    @cli
+    def main(x: Arg('\n\n\n\n')):
+        pass
+
+    # Act.
+    output = execute(main, with_='--help')
+
+    # Assert.
+    assert output.text.startswith('usage: main')
