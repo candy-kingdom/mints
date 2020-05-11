@@ -85,7 +85,7 @@ def prefixes(signature: inspect.Signature) -> str:
     arguments, then the resulting string would be `/+`.
     """
 
-    def prefix(x: inspect.Parameter) -> str:
+    def prefix_of(x: inspect.Parameter) -> str:
         prefix = getattr(x.annotation, 'prefix', '-')
 
         if prefix == '':
@@ -101,7 +101,7 @@ def prefixes(signature: inspect.Signature) -> str:
         return prefix
 
     params = signature.parameters.values()
-    prefixes = map(prefix, params)
+    prefixes = map(prefix_of, params)
     prefixes = set(prefixes)
 
     if len(prefixes) == 0:
