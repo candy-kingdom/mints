@@ -102,11 +102,15 @@ def test_invalid_command_name():
     cx_a = execute(with_='three')
     cx_b = execute(with_='one c')
     cx_c = execute(with_='two z')
+    cx_d = execute(with_='one x')
+    cx_e = execute(with_='two a')
 
     # Assert.
     assert isinstance(cx_a, SystemExit)
     assert isinstance(cx_b, SystemExit)
     assert isinstance(cx_c, SystemExit)
+    assert isinstance(cx_d, SystemExit)
+    assert isinstance(cx_e, SystemExit)
 
 
 def test_multiple_subcommands():
