@@ -369,7 +369,7 @@ def test_flag_with_custom_prefix():
         return x
 
     # Act.
-    cx = execute(main, with_='++x')
+    cx = execute(with_='++x')
 
     # Assert.
     assert cx == True
@@ -382,7 +382,7 @@ def test_flag_with_custom_prefix_and_short():
         return xyz
 
     # Act.
-    cx = execute(main, with_='+x')
+    cx = execute(with_='+x')
 
     # Assert.
     assert cx is True
@@ -395,7 +395,7 @@ def test_flag_with_custom_but_default_prefix():
         return x
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert cx == True
@@ -408,7 +408,7 @@ def test_flag_with_letter_prefix():
         return x
 
     # Act.
-    cx = execute(main, with_='aax')
+    cx = execute(with_='aax')
 
     # Assert.
     assert cx is True
@@ -421,7 +421,7 @@ def test_flag_with_empty_prefix():
         return x
 
     # Act.
-    ex = execute(main, with_='x')
+    ex = execute(with_='x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -434,7 +434,7 @@ def test_flag_with_none_prefix():
         return x
 
     # Act.
-    ex = execute(main, with_='x')
+    ex = execute(with_='x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -447,7 +447,7 @@ def test_flag_with_long_prefix():
         return x
 
     # Act.
-    ex = execute(main, with_='----x')
+    ex = execute(with_='----x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -460,7 +460,7 @@ def test_flag_specified_with_wrong_prefix():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -473,7 +473,7 @@ def test_flag_with_non_string_prefix():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -486,7 +486,7 @@ def test_two_flags_and_one_with_prefix():
         return x, y
 
     # Act.
-    cx = execute(main, with_='++x --y')
+    cx = execute(with_='++x --y')
 
     # Assert.
     assert cx == (True, True)
@@ -499,7 +499,7 @@ def test_two_flags_with_same_prefix():
         return x, y
 
     # Act.
-    cx = execute(main, with_='++x ++y')
+    cx = execute(with_='++x ++y')
 
     # Assert.
     assert cx == (True, True)
@@ -516,7 +516,7 @@ def test_flag_of_subcommand_with_custom_prefix():
         return x
 
     # Act.
-    cx = execute(main, with_='sub ++x')
+    cx = execute(with_='sub ++x')
 
     # Assert.
     assert cx == True

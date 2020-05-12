@@ -225,7 +225,7 @@ def test_opt_with_custom_prefix():
         return x
 
     # Act.
-    cx = execute(main, with_='++x 1')
+    cx = execute(with_='++x 1')
 
     # Assert.
     assert cx == '1'

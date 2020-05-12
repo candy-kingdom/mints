@@ -196,7 +196,7 @@ def test_help_for_argument_with_whitespace_description():
         pass
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert output.text.startswith('usage: main')
@@ -209,7 +209,7 @@ def test_help_for_argument_with_newline_description():
         pass
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert output.text.startswith('usage: main')
