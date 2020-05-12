@@ -26,8 +26,8 @@ class CLI:
     def __call__(self,
                  args_or_func: Union[Iterable[str], Callable] = None,
                  **kwargs: Any) -> Any:
-        """Either defines a main command or parses
-        the command line arguments and executes the command.
+        """Either sets a main command or parses the command line arguments
+        and executes the main command.
 
         Args:
             args_or_func: One of the following:
