@@ -6,6 +6,8 @@ from candies.cli.args.arg import Arg
 from candies.cli.args.opt import Opt
 from candies.cli.cli import cli, CLI
 
+from tests.execution import execute, redirect_stderr, redirect_stdout
+
 
 class Money:
     def __init__(self, value: float, currency: str):
@@ -22,14 +24,6 @@ class Money:
         return Money(value, 'dollars')
 
 
-def execute(with_: str) -> Any:
-    try:
-        return cli(with_.split())
-    # `SystemExit`, because `argparse` calls `exit` on error.
-    except SystemExit as e:
-        return e
-
-
 @pytest.fixture(autouse=True)
 def reset():
     # Reset `cli` before each test
@@ -44,7 +38,7 @@ def test_typed_arg_without_description():
         return x
 
     # Act.
-    cx = execute(with_='10')
+    cx = execute(cli, '10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -58,7 +52,7 @@ def test_typed_arg_with_description():
         return x
 
     # Act.
-    cx = execute(with_='10')
+    cx = execute(cli, '10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -72,10 +66,12 @@ def test_typed_arg_with_invalid_value():
         return x
 
     # Act.
-    cx = execute(with_='whatever')
+    cx, err = execute(cli, 'a', redirect_stderr)
 
     # Assert.
     assert isinstance(cx, SystemExit)
+    assert 'invalid int value' in err
+
 
 
 def test_typed_opt_without_description():
@@ -85,7 +81,7 @@ def test_typed_opt_without_description():
         return x
 
     # Act.
-    cx = execute(with_='--x 10')
+    cx = execute(cli, '--x 10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -99,7 +95,7 @@ def test_typed_opt_with_description():
         return x
 
     # Act.
-    cx = execute(with_='--x 10')
+    cx = execute(cli, '--x 10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -113,7 +109,7 @@ def test_args_typed_with_lists():
         return x, y, z
 
     # Act.
-    cx = execute(with_='1 2 3 4')
+    cx = execute(cli, '1 2 3 4')
 
     # Assert.
     assert cx == (1, [2, 3, 4], [])
@@ -126,7 +122,7 @@ def test_opts_typed_with_lists():
         return x, y, z
 
     # Act.
-    cx = execute(with_='--x 1 --y 2 3 4 --z 5')
+    cx = execute(cli, '--x 1 --y 2 3 4 --z 5')
 
     # Assert.
     assert cx == (1, [2, 3, 4], 5)
@@ -139,7 +135,7 @@ def test_args_and_opts_typed_with_lists():
         return x, y, z
 
     # Act.
-    cx = execute(with_='1 2 3 --z 4 5')
+    cx = execute(cli, '1 2 3 --z 4 5')
 
     # Assert.
     assert cx == (1, [2, 3], [4, 5])
@@ -157,7 +153,7 @@ def test_arg_typed_with_custom_type():
             return Money.dollars(float(x[1:]))
 
     # Act.
-    cx = execute(with_='--add $500')
+    cx = execute(cli, '--add $500')
 
     # Assert.
     assert cx == Money(500, 'dollars')
@@ -175,7 +171,7 @@ def test_arg_typed_with_list_of_custom_type():
             return Money.dollars(float(x[1:]))
 
     # Act.
-    cx = execute(with_='--add $100 $200')
+    cx = execute(cli, '--add $100 $200')
 
     # Assert.
     assert cx == [Money(100, 'dollars'), Money(200, 'dollars')]
@@ -188,10 +184,11 @@ def test_arg_typed_with_unsupported_type():
         return add
 
     # Act.
-    cx = execute(with_='--add $500')
+    cx, err = execute(cli, '--add $500', redirect_stderr)
 
     # Assert.
-    assert isinstance(cx, BaseException)
+    assert isinstance(cx, SystemExit)
+    assert 'invalid Money value' in err
 
 
 def test_arg_typed_with_list_of_unsupported_types():
@@ -201,10 +198,11 @@ def test_arg_typed_with_list_of_unsupported_types():
         return add
 
     # Act.
-    cx = execute(with_='--add $100 $200')
+    cx, err = execute(cli, '--add $100 $200', redirect_stderr)
 
     # Assert.
-    assert isinstance(cx, BaseException)
+    assert isinstance(cx, SystemExit)
+    assert 'invalid Money value' in err
 
 
 def test_parse_with_unannotated_parser_function():
@@ -256,7 +254,7 @@ def test_add_parser_with_type():
     cli.add_parser(Example)
 
     # Act.
-    cx = execute(with_='10')
+    cx = execute(cli, '10')
 
     # Assert.
     assert cx == Example('10')
