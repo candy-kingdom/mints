@@ -25,7 +25,7 @@ def reset():
     globals()['cli'] = CLI()
 
 
-def test_valid_command_name():
+def test_existent_command_name():
     # Arrange.
     @cli
     def main():
@@ -68,7 +68,7 @@ def test_valid_command_name():
     assert cx_y is False
 
 
-def test_invalid_command_name():
+def test_nonexistent_command_name():
     # Arrange.
     @cli
     def main():
@@ -116,26 +116,22 @@ def test_invalid_command_name():
 def test_multiple_subcommands():
     # Arrange.
     @cli
-    def main(debug: Flag):
+    def main(x: Flag):
         pass
 
     @main.command
-    def first(x: Arg[int]):
+    def first(y: Arg[int]):
         pass
 
     @first.command
-    def second(y: Opt[int]):
-        pass
-
-    @second.command
-    def third(z: Flag):
+    def second(z: Opt[int]):
         return z
 
     # Act.
-    cx = execute(with_='--debug first 1 second --y 2 third --z')
+    cx = execute(with_='--x first 1 second --z 2')
 
     # Assert.
-    assert cx is True
+    assert cx == 2
 
 
 def test_one_command_without_arguments():
