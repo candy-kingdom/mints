@@ -1,4 +1,4 @@
-from typing import Any, Callable, ContextManager
+from typing import Any, Callable, ContextManager, Optional
 import contextlib
 import io
 import sys
