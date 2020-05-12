@@ -78,6 +78,35 @@ def help(command: Command) -> Type[HelpFormatter]:
     return Help
 
 
+def prefixes(signature: inspect.Signature) -> str:
+    """Constructs a prefixes string for a `signature`.
+
+    For example, if `signature` has `Opt(prefix='/')` and `Opt(prefix='+')`
+    arguments, then the resulting string would be `/+`.
+    """
+
+    def prefix_of(x: inspect.Parameter) -> str:
+        prefix = getattr(x.annotation, 'prefix', '-')
+
+        if prefix == '':
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
+                             f"'{prefix}': "
+                             f"it is an empty string")
+
+        if len(prefix) > 1:
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
+                             f"'{prefix}': "
+                             f"it consists of more than one character")
+
+        return prefix
+
+    params = signature.parameters.values()
+    prefixes = map(prefix_of, params)
+    prefixes = set(prefixes)
+
+    return ''.join(prefixes) or '-'
+
+
 def new_parser(*args, **kwargs) -> ArgumentParser:
     """Creates a new parser."""
     return ArgumentParser(*args, **kwargs)
@@ -106,37 +135,40 @@ def configured(new: Callable,
         {'.command': 'tool', '..command': 'install', 'g': 'something'}.
     """
 
+    signature = inspect.signature(command.func)
     parser = new(command.name,
                  description=command.description,
-                 formatter_class=help(command))
+                 formatter_class=help(command),
+                 prefix_chars=prefixes(signature))
 
-    def short_of(x: Any) -> Optional[str]:
-        short = getattr(x, 'short', None)
+    def short_of(x: inspect.Parameter, kind: Any) -> Optional[str]:
+        short = getattr(kind, 'short', None)
 
         if short is None:
             # If `None`, then considered as omitted.
             return short
 
         if short == '':
-            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has an invalid short name "
                              f"'{short}': "
                              f"it is an empty string")
 
         if len(short) > 1:
-            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has an invalid short name "
                              f"'{short}': "
                              f"it consists of more than one character")
 
         if not short.isalpha():
-            raise ValueError(f"Flag '{parameter.name}' has invalid short name "
+            raise ValueError(f"Argument '{x.name}' has an invalid short name "
                              f"'{short}': "
                              f"it is not an alphabet character")
 
         return short
 
-    def prefixes_of(x: Any) -> Tuple[str, str]:
-        # TODO: Add more prefixes depending on `prefix` attribute.
-        return '-', '--'
+    def prefixes_of(x: inspect.Parameter, kind: Any) -> Tuple[str, str]:
+        prefix = getattr(kind, 'prefix', '-')
+
+        return prefix, prefix * 2
 
     def is_(x: Any, of: Type) -> bool:
         return isinstance(x, of) or x == of
@@ -145,8 +177,8 @@ def configured(new: Callable,
         parser.add_argument(x.name, **config)
 
     def configure_named_arg(x: inspect.Parameter, kind: Any, config: Dict):
-        short = short_of(kind)
-        short_prefix, long_prefix = prefixes_of(kind)
+        short = short_of(x, kind)
+        short_prefix, long_prefix = prefixes_of(x, kind)
 
         if short is None:
             parser.add_argument(f'{long_prefix}{x.name}',
@@ -180,8 +212,6 @@ def configured(new: Callable,
 
         configure_named_arg(x, kind, config)
 
-    signature = inspect.signature(command.func)
-
     # Add parameters to the parser.
     for parameter in signature.parameters.values():
         if parameter.annotation is parameter.default:
@@ -192,7 +222,9 @@ def configured(new: Callable,
 
         description = getattr(parameter.annotation, 'description', None)
         if description is not None:
-            config['help'] = description
+            # Here the following issue is addressed:
+            # https://bugs.python.org/issue38584.
+            config['help'] = description if not description.isspace() else ''
 
         type = getattr(parameter.annotation, 'type', None)
         if type is not None:
