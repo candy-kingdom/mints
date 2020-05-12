@@ -1,11 +1,12 @@
 """Various tests for `candies.cli.command.Command.help`."""
 
 import sys
-from typing import Callable
+
+import pytest
 
 from candies.cli.args.arg import Arg
 from candies.cli.args.flag import Flag
-from candies.cli.cli import cli
+from candies.cli.cli import cli, CLI
 from candies.cli.command import Command
 
 
@@ -19,12 +20,12 @@ class Output:
         self.text += text
 
 
-def execute(cli_: Callable, with_: str) -> Output:
+def execute(with_: str) -> Output:
     stdout = sys.stdout
     output = sys.stdout = Output()
 
     try:
-        cli_(with_.split())
+        cli(with_.split())
     except SystemExit as ex:
         if ex.code != 0:
             raise
@@ -34,6 +35,13 @@ def execute(cli_: Callable, with_: str) -> Output:
     return output
 
 
+@pytest.fixture(autouse=True)
+def reset():
+    # Reset `cli` before each test
+    # as if we have just imported it.
+    globals()['cli'] = CLI()
+
+
 def test_default_help_without_description():
     # Arrange.
     @cli
@@ -41,7 +49,7 @@ def test_default_help_without_description():
         pass
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert output.text.startswith('usage: main')
@@ -54,7 +62,7 @@ def test_default_help_with_description():
         """Here is your help."""
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert 'Here is your help.' in output.text
@@ -67,7 +75,7 @@ def test_default_help_with_one_argument():
         return x
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert 'description of `x`' in output.text
@@ -81,7 +89,7 @@ def test_default_help_with_two_arguments():
         return x + y
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert 'description of `x`' in output.text
@@ -95,7 +103,7 @@ def test_default_help_with_one_flag():
         return x
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert 'description of `x`' in output.text
@@ -109,7 +117,7 @@ def test_default_help_with_two_flags():
         return x + y
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert 'description of `x`' in output.text
@@ -127,8 +135,8 @@ def test_default_help_for_subcommand():
         pass
 
     # Act.
-    output_a = execute(main, with_='--help')
-    output_b = execute(main, with_='sub --help')
+    output_a = execute(with_='--help')
+    output_b = execute(with_='sub --help')
 
     # Assert.
     assert output_a.text.startswith('usage: main')
@@ -150,8 +158,8 @@ def test_custom_help():
         pass
 
     # Act.
-    output_a = execute(main, with_='--help')
-    output_b = execute(main, with_='sub --help')
+    output_a = execute(with_='--help')
+    output_b = execute(with_='sub --help')
 
     # Assert.
     assert output_a.text == 'main'
@@ -173,8 +181,8 @@ def test_custom_help_for_subcommand():
         return command.name
 
     # Act.
-    output_a = execute(main, with_='--help')
-    output_b = execute(main, with_='sub --help')
+    output_a = execute(with_='--help')
+    output_b = execute(with_='sub --help')
 
     # Assert.
     assert output_a.text.startswith('usage: main')
@@ -188,7 +196,7 @@ def test_help_for_argument_with_whitespace_description():
         pass
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert output.text.startswith('usage: main')
@@ -201,7 +209,7 @@ def test_help_for_argument_with_newline_description():
         pass
 
     # Act.
-    output = execute(main, with_='--help')
+    output = execute(with_='--help')
 
     # Assert.
     assert output.text.startswith('usage: main')

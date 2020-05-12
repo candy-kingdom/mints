@@ -18,48 +18,78 @@ class CLI:
             Maps a custom type to a parser itself.
     """
 
-    def __init__(self, main: Command, parser: Optional[Parser] = None):
+    def __init__(self,
+                 main: Optional[Command] = None,
+                 parser: Optional[Parser] = None):
         self.main = main
         self.parser = parser
         self.parsers = {}
 
-    def __call__(self, args: Optional[Iterable[str]] = None):
-        """Parses the command line arguments and executes the command.
+    def __call__(self,
+                 args_or_func: Union[Iterable[str], Callable] = None,
+                 **kwargs: Any) -> Any:
+        """Either sets a main command or parses the command line arguments
+        and executes the main command.
 
         Args:
-            args: A list of command line arguments as they would be presented
-                in `sys.argv` (except for the name of the file). For example,
-                an input string 'main.py --a=10 --b=20' should be converted to
-                ['--a=10', '--b=20'] and passed to this method.
-                `argv[1:]` if not explicitly specified.
+            args_or_func: One of the following:
+                - An iterable of command line arguments as they would be
+                  presented in `sys.argv` (except for the name of the file).
+                  For example, an input string 'main.py --a=10 --b=20' should
+                  be passed as ['--a=10', '--b=20'].
+                  Is set to `argv[1:]` if not specified.
+                - A function to be set as the main command of the CLI.
+            **kwargs: Options for the main command (such as `name` or
+                `description`; refer to the documentation of `Command`
+                for a full list of available options).
+
+        Raises:
+            `ValueError` when
+                - setting the main command when it has already been set;
+                - passing `kwargs` along with arguments to run the CLI with;
+                - running the CLI when the main command has not been set.
+
+        Examples:
+            @cli
+            def echo(text: Arg[str]):
+                print(text)
+
+            if __name__ == '__main__':
+                cli()
         """
 
-        parser = self.parser or StandardParser(self)
-        args = args if args is not None else sys.argv[1:]
+        def set(func: Callable) -> Command:
+            if self.main is not None:
+                raise ValueError(f"Cannot set '{func.__name__}': the main "
+                                 f"command has already been set.")
 
-        command = self.main
-        context = None
+            self.main = Command(func, **kwargs)
 
-        for invoke in parser.parse(args):
-            command, context = invoke(command, context)
+            return self.main
 
-        return context
+        def run(args: Optional[Iterable[str]]) -> Any:
+            if kwargs:
+                raise ValueError("Cannot run the CLI: "
+                                 "`kwargs` are not expected.")
+            if self.main is None:
+                raise ValueError("Cannot run the CLI: "
+                                 "the main command is not set.")
 
-    def command(self, *args, **kwargs):
-        """Defines a subcommand.
+            parser = self.parser or StandardParser(self)
+            args = args if args is not None else sys.argv[1:]
 
-        Consider looking at the documentation of the `Command.command` method
-        for more details.
-        """
-        return self.main.command(*args, **kwargs)
+            command = self.main
+            context = None
 
-    def help(self, *args, **kwargs):
-        """Defines a function to be called for `--help`.
+            for invoke in parser.parse(args):
+                command, context = invoke(command, context)
 
-        Consider looking at the documentation of the `Command.help` method
-        for more details.
-        """
-        return self.main.help(*args, **kwargs)
+            return context
+
+        if callable(args_or_func):
+            return set(args_or_func)
+        else:
+            return run(args_or_func)
 
     def parse(self, func: Callable[[str], Any]) -> Callable[[str], Any]:
         """Defines a parser function for a custom type.
@@ -163,28 +193,5 @@ class CLI:
         return callable
 
 
-def cli(func: Optional[Callable] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None) -> Union[Callable, CLI]:
-    """Constructs a `CLI` from the specified function.
-
-    Args:
-        func: A function to construct a `CLI` from.
-        name: A name of the main command.
-        description: A description of the main command.
-
-    Returns:
-        Either an instance of `CLI` if `func` was specified
-        or a decorator to wrap a function with.
-
-    Examples:
-        @cli
-        def git(version):
-            ...
-    """
-
-    def wrap(x):
-        return CLI(Command(x, name, description))
-
-    return wrap(func) if func is not None else \
-           wrap
+cli: CLI = CLI()
+"""A default instance of `CLI` for convenient use in most cases."""

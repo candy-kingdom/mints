@@ -27,7 +27,7 @@ class Command:
             print(f'Merging {branch}...')
 
         if __name__ == '__main__':
-            git('merge --branch develop'.split())
+            cli('merge --branch develop'.split())
     """
 
     def __init__(self,
@@ -74,8 +74,7 @@ class Command:
 
             return command
 
-        return define(func) if func is not None else \
-               define
+        return define(func) if func is not None else define
 
     def help(self, func: Callable[['Command'], str]) -> Callable:
         """Defines a callable to be called for `--help`.
