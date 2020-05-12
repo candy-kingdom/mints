@@ -6,7 +6,7 @@ import sys
 
 def execute(cli: Callable[[str], Any],
             with_: str,
-            redirect: ContextManager = None) -> Any:
+            redirect: Optional[ContextManager] = None) -> Any:
     """Executes the CLI callable with the specified command line.
 
     Supports redirection of either `sys.stdout` or `sys.stderr` for testing
@@ -39,7 +39,7 @@ def execute(cli: Callable[[str], Any],
     def execute_():
         try:
             return cli(with_.split())
-        # `BaseException`, because `argparse` calls `exit` on error.
+        # `BaseException`, because `argparse` throws `SystemExit` on error.
         except BaseException as e:
             return e
 
