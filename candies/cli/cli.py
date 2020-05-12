@@ -43,8 +43,9 @@ class CLI:
 
         Raises:
             `ValueError` when
-                - trying to set a main command when it has already been set;
-                - passing `kwargs` along with arguments to parse.
+                - setting the main command when it has already been set;
+                - passing `kwargs` along with arguments to run the CLI with;
+                - running the CLI when the main command has not been set.
 
         Examples:
             @cli
@@ -66,8 +67,11 @@ class CLI:
 
         def run(args: Optional[Iterable[str]]) -> Any:
             if kwargs:
-                raise ValueError(f"`kwargs` are not expected "
-                                 f"when running the `CLI`.")
+                raise ValueError("Cannot run the CLI: "
+                                 "`kwargs` are not expected.")
+            if self.main is None:
+                raise ValueError("Cannot run the CLI: "
+                                 "the main command is not set.")
 
             parser = self.parser or StandardParser(self)
             args = args if args is not None else sys.argv[1:]
