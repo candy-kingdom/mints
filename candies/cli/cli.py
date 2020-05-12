@@ -18,7 +18,9 @@ class CLI:
             Maps a custom type to a parser itself.
     """
 
-    def __init__(self, main: Command = None, parser: Parser = None):
+    def __init__(self,
+                 main: Optional[Command] = None,
+                 parser: Optional[Parser] = None):
         self.main = main
         self.parser = parser
         self.parsers = {}
