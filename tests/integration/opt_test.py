@@ -1,19 +1,26 @@
 """Various tests for `candies.cli.args.opt.Opt`."""
 
-from typing import Callable
+import pytest
 
-from candies.cli.cli import cli
+from candies.cli.cli import cli, CLI
 from candies.cli.args.arg import Arg
 from candies.cli.args.opt import Opt
 from candies.cli.args.flag import Flag
 
 
-def execute(cli_: Callable, with_: str):
+def execute(with_: str):
     try:
-        return cli_(with_.split())
+        return cli(with_.split())
     # `BaseException`, because `argparse` calls `exit` on error.
     except BaseException as e:
         return e
+
+
+@pytest.fixture(autouse=True)
+def reset():
+    # Reset `cli` before each test
+    # as if we have just imported it.
+    globals()['cli'] = CLI()
 
 
 def test_one_opt():
@@ -23,7 +30,7 @@ def test_one_opt():
         return x
 
     # Act.
-    cx = execute(main, with_='--x 1')
+    cx = execute(with_='--x 1')
 
     # Assert.
     assert cx == '1'
@@ -36,7 +43,7 @@ def test_one_opt_with_description():
         return x
 
     # Act.
-    cx = execute(main, with_='--x 1')
+    cx = execute(with_='--x 1')
 
     # Assert.
     assert cx == '1'
@@ -49,7 +56,7 @@ def test_one_opt_with_default_value():
         return x
 
     # Act.
-    cx = execute(main, with_='--x 1')
+    cx = execute(with_='--x 1')
 
     # Assert.
     assert cx == '1'
@@ -62,7 +69,7 @@ def test_one_opt_with_default_value_but_not_specified_in_cli():
         return x
 
     # Act.
-    cx = execute(main, with_='')
+    cx = execute(with_='')
 
     # Assert.
     assert cx == '2'
@@ -75,7 +82,7 @@ def test_one_opt_not_specified_in_cli():
         return x
 
     # Act.
-    ex = execute(main, with_='')
+    ex = execute(with_='')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -88,7 +95,7 @@ def test_one_opt_with_default_value_but_different_opt_specified_in_cli():
         return x
 
     # Act.
-    ex = execute(main, with_='--y 1')
+    ex = execute(with_='--y 1')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -101,7 +108,7 @@ def test_one_opt_without_value():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -114,7 +121,7 @@ def test_two_opts():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--x 1 --y 2')
+    cx = execute(with_='--x 1 --y 2')
 
     # Assert.
     assert cx == ('1', '2')
@@ -127,7 +134,7 @@ def test_two_opts_in_different_order():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--y 2 --x 1')
+    cx = execute(with_='--y 2 --x 1')
 
     # Assert.
     assert cx == ('1', '2')
@@ -140,7 +147,7 @@ def test_one_opt_before_flag():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--x 1 --y')
+    cx = execute(with_='--x 1 --y')
 
     # Assert.
     assert cx == ('1', True)
@@ -153,7 +160,7 @@ def test_one_opt_before_arg():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--x 1 2')
+    cx = execute(with_='--x 1 2')
 
     # Assert.
     assert cx == ('1', '2')
@@ -166,7 +173,7 @@ def test_one_opt_specified_without_value_but_another_flag():
         return x
 
     # Act.
-    ex = execute(main, with_='--x --y')
+    ex = execute(with_='--x --y')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -179,7 +186,7 @@ def test_one_opt_with_implicit_short():
         return xyz
 
     # Act.
-    ex = execute(main, with_='-x 1')
+    ex = execute(with_='-x 1')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -192,7 +199,7 @@ def test_one_opt_with_explicit_short():
         return x
 
     # Act.
-    cx = execute(main, with_='-y 1')
+    cx = execute(with_='-y 1')
 
     # Assert.
     assert cx == '1'
@@ -205,7 +212,7 @@ def test_opt_specified_twice():
         return x
 
     # Act.
-    cx = execute(main, with_='--x 1 --x 2')
+    cx = execute(with_='--x 1 --x 2')
 
     # Assert.
     assert cx == '2'

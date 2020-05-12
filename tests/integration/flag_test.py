@@ -1,18 +1,27 @@
 """Various tests for `candies.cli.args.flag.Flag`."""
 
-from typing import Callable, Any
+from typing import Any
 
-from candies.cli.cli import cli
+import pytest
+
+from candies.cli.cli import cli, CLI
 from candies.cli.args.flag import Flag
 from candies.cli.args.arg import Arg
 
 
-def execute(cli_: Callable, with_: str) -> Any:
+def execute(with_: str) -> Any:
     try:
-        return cli_(with_.split())
+        return cli(with_.split())
     # `BaseException`, because `argparse` calls `exit` on error.
     except BaseException as e:
         return e
+
+
+@pytest.fixture(autouse=True)
+def reset():
+    # Reset `cli` before each test
+    # as if we have just imported it.
+    globals()['cli'] = CLI()
 
 
 def test_one_flag():
@@ -22,7 +31,7 @@ def test_one_flag():
         return x
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert cx == True
@@ -35,7 +44,7 @@ def test_one_flag_with_description():
         return x
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert cx == True
@@ -48,7 +57,7 @@ def test_one_flag_with_default_false():
         return x
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert cx == True
@@ -61,7 +70,7 @@ def test_one_flag_with_default_true():
         return x
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert cx == True
@@ -74,7 +83,7 @@ def test_one_flag_with_default_int():
         return x
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert isinstance(cx, BaseException)
@@ -87,7 +96,7 @@ def test_one_flag_not_specified():
         return x
 
     # Act.
-    cx = execute(main, with_='')
+    cx = execute(with_='')
 
     # Assert.
     assert cx == False
@@ -100,7 +109,7 @@ def test_one_flag_not_specified_with_default_false():
         return x
 
     # Act.
-    cx = execute(main, with_='')
+    cx = execute(with_='')
 
     # Assert.
     assert cx == False
@@ -113,7 +122,7 @@ def test_one_flag_not_specified_with_default_true():
         return x
 
     # Act.
-    cx = execute(main, with_='')
+    cx = execute(with_='')
 
     # Assert.
     assert cx == True
@@ -126,7 +135,7 @@ def test_two_flags():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--x --y')
+    cx = execute(with_='--x --y')
 
     # Assert.
     assert cx == (True, True)
@@ -139,7 +148,7 @@ def test_two_flags_in_different_order():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--y --x')
+    cx = execute(with_='--y --x')
 
     # Assert.
     assert cx == (True, True)
@@ -152,7 +161,7 @@ def test_two_flags_one_specified():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--x')
+    cx = execute(with_='--x')
 
     # Assert.
     assert cx == (True, False)
@@ -165,7 +174,7 @@ def test_two_flags_not_specified():
         return x, y
 
     # Act.
-    cx = execute(main, with_='')
+    cx = execute(with_='')
 
     # Assert.
     assert cx == (False, False)
@@ -178,7 +187,7 @@ def test_one_flag_after_arg():
         return x, y
 
     # Act.
-    cx = execute(main, with_='1 --y')
+    cx = execute(with_='1 --y')
 
     # Assert.
     assert cx == ('1', True)
@@ -191,7 +200,7 @@ def test_one_flag_before_arg():
         return x, y
 
     # Act.
-    cx = execute(main, with_='--y 1')
+    cx = execute(with_='--y 1')
 
     # Assert.
     assert cx == ('1', True)
@@ -204,7 +213,7 @@ def test_one_arg_between_two_flags():
         return x, y, z
 
     # Act.
-    cx = execute(main, with_='--y 1 --z')
+    cx = execute(with_='--y 1 --z')
 
     # Assert.
     assert cx == ('1', True, True)
@@ -217,7 +226,7 @@ def test_one_arg_with_flag_not_specified():
         return x, y
 
     # Act.
-    cx = execute(main, with_='1')
+    cx = execute(with_='1')
 
     # Assert.
     assert cx == ('1', False)
@@ -230,7 +239,7 @@ def test_one_flag_without_short():
         return xyz
 
     # Act.
-    ex = execute(main, with_='-x')
+    ex = execute(with_='-x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -243,7 +252,7 @@ def test_one_flag_with_explicit_short():
         return xyz
 
     # Act.
-    cx = execute(main, with_='-a')
+    cx = execute(with_='-a')
 
     # Assert.
     assert cx == True
@@ -256,7 +265,7 @@ def test_one_flag_with_explicit_short_and_description():
         return xyz
 
     # Act.
-    cx = execute(main, with_='-a')
+    cx = execute(with_='-a')
 
     # Assert.
     assert cx == True
@@ -269,7 +278,7 @@ def test_two_flags_with_same_implicit_shorts():
         return xy, xz
 
     # Act.
-    cx = execute(main, with_='--xy --xz')
+    cx = execute(with_='--xy --xz')
 
     # Assert.
     assert cx == (True, True)
@@ -282,7 +291,7 @@ def test_two_flags_with_same_explicit_shorts():
         return x, y
 
     # Act.
-    ex = execute(main, with_='--x --y')
+    ex = execute(with_='--x --y')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -295,7 +304,7 @@ def test_flag_with_empty_short():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -308,7 +317,7 @@ def test_flag_with_too_long_short():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -321,7 +330,7 @@ def test_flag_with_digit_short():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -334,7 +343,7 @@ def test_flag_with_sign_short():
         return x
 
     # Act.
-    ex = execute(main, with_='--x')
+    ex = execute(with_='--x')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -347,7 +356,7 @@ def test_flag_specified_twice():
         return x
 
     # Act.
-    cx = execute(main, with_='--x --x')
+    cx = execute(with_='--x --x')
 
     # Assert.
     assert cx is True

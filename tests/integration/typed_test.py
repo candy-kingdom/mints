@@ -1,10 +1,10 @@
-from typing import Callable, Any, List
+from typing import Any, List
+
+import pytest
 
 from candies.cli.args.arg import Arg
 from candies.cli.args.opt import Opt
-from candies.cli.cli import cli
-
-import pytest
+from candies.cli.cli import cli, CLI
 
 
 class Money:
@@ -22,12 +22,19 @@ class Money:
         return Money(value, 'dollars')
 
 
-def execute(cli_: Callable, with_: str) -> Any:
+def execute(with_: str) -> Any:
     try:
-        return cli_(with_.split())
+        return cli(with_.split())
     # `SystemExit`, because `argparse` calls `exit` on error.
     except SystemExit as e:
         return e
+
+
+@pytest.fixture(autouse=True)
+def reset():
+    # Reset `cli` before each test
+    # as if we have just imported it.
+    globals()['cli'] = CLI()
 
 
 def test_typed_arg_without_description():
@@ -37,7 +44,7 @@ def test_typed_arg_without_description():
         return x
 
     # Act.
-    cx = execute(main, with_='10')
+    cx = execute(with_='10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -51,7 +58,7 @@ def test_typed_arg_with_description():
         return x
 
     # Act.
-    cx = execute(main, with_='10')
+    cx = execute(with_='10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -65,7 +72,7 @@ def test_typed_arg_with_invalid_value():
         return x
 
     # Act.
-    cx = execute(main, with_='whatever')
+    cx = execute(with_='whatever')
 
     # Assert.
     assert isinstance(cx, SystemExit)
@@ -78,7 +85,7 @@ def test_typed_opt_without_description():
         return x
 
     # Act.
-    cx = execute(main, with_='--x 10')
+    cx = execute(with_='--x 10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -92,7 +99,7 @@ def test_typed_opt_with_description():
         return x
 
     # Act.
-    cx = execute(main, with_='--x 10')
+    cx = execute(with_='--x 10')
 
     # Assert.
     assert isinstance(cx, int)
@@ -106,7 +113,7 @@ def test_args_typed_with_lists():
         return x, y, z
 
     # Act.
-    cx = execute(main, with_='1 2 3 4')
+    cx = execute(with_='1 2 3 4')
 
     # Assert.
     assert cx == (1, [2, 3, 4], [])
@@ -119,7 +126,7 @@ def test_opts_typed_with_lists():
         return x, y, z
 
     # Act.
-    cx = execute(main, with_='--x 1 --y 2 3 4 --z 5')
+    cx = execute(with_='--x 1 --y 2 3 4 --z 5')
 
     # Assert.
     assert cx == (1, [2, 3, 4], 5)
@@ -132,7 +139,7 @@ def test_args_and_opts_typed_with_lists():
         return x, y, z
 
     # Act.
-    cx = execute(main, with_='1 2 3 --z 4 5')
+    cx = execute(with_='1 2 3 --z 4 5')
 
     # Assert.
     assert cx == (1, [2, 3], [4, 5])
@@ -144,13 +151,13 @@ def test_arg_typed_with_custom_type():
     def main(add: Opt[Money]):
         return add
 
-    @main.parse
+    @cli.parse
     def money(x: str) -> Money:
         if x.startswith('$'):
             return Money.dollars(float(x[1:]))
 
     # Act.
-    cx = execute(main, with_='--add $500')
+    cx = execute(with_='--add $500')
 
     # Assert.
     assert cx == Money(500, 'dollars')
@@ -162,13 +169,13 @@ def test_arg_typed_with_list_of_custom_type():
     def main(add: Opt[List[Money]]):
         return add
 
-    @main.parse
+    @cli.parse
     def money(x: str) -> Money:
         if x.startswith('$'):
             return Money.dollars(float(x[1:]))
 
     # Act.
-    cx = execute(main, with_='--add $100 $200')
+    cx = execute(with_='--add $100 $200')
 
     # Assert.
     assert cx == [Money(100, 'dollars'), Money(200, 'dollars')]
@@ -181,7 +188,7 @@ def test_arg_typed_with_unsupported_type():
         return add
 
     # Act.
-    cx = execute(main, with_='--add $500')
+    cx = execute(with_='--add $500')
 
     # Assert.
     assert isinstance(cx, BaseException)
@@ -194,7 +201,7 @@ def test_arg_typed_with_list_of_unsupported_types():
         return add
 
     # Act.
-    cx = execute(main, with_='--add $100 $200')
+    cx = execute(with_='--add $100 $200')
 
     # Assert.
     assert isinstance(cx, BaseException)
@@ -208,7 +215,7 @@ def test_parse_with_unannotated_parser_function():
 
     # Act & Assert.
     with pytest.raises(ValueError):
-        @main.parse
+        @cli.parse
         def something(x: str):
             pass
 
@@ -223,12 +230,12 @@ def test_parse_with_duplicate_parser_function():
         pass
 
     # Act & Assert.
-    @main.parse
+    @cli.parse
     def a(x: str) -> Example:
         pass
 
     with pytest.raises(ValueError, match="namely 'a'"):
-        @main.parse
+        @cli.parse
         def b(x: str) -> Example:
             pass
 
@@ -246,10 +253,10 @@ def test_add_parser_with_type():
     def main(x: Arg[Example]):
         return x
 
-    main.add_parser(Example)
+    cli.add_parser(Example)
 
     # Act.
-    cx = execute(main, with_='10')
+    cx = execute(with_='10')
 
     # Assert.
     assert cx == Example('10')
@@ -269,7 +276,7 @@ def test_add_parser_with_duplicate_type():
         return x
 
     # Act & Assert.
-    main.add_parser(Example)
+    cli.add_parser(Example)
 
     with pytest.raises(ValueError, match="namely 'Example'"):
-        main.add_parser(Example)
+        cli.add_parser(Example)

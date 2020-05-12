@@ -18,13 +18,13 @@ class StandardParser(Parser):
 
     For example, for the following function
 
-        def concat(left: Arg('left operand'),
-                   right: Arg('right operand')):
-            print(left + right)
+        def echo(x: Arg('Description of `x`.'),
+                 y: Opt('Description of `y`.')):
+            print(x, y)
 
     an instance of `ArgumentParser` will contain:
-        - an argument '-l, --left' with a description 'left operand';
-        - an argument '-r, --right' with a description 'right operand'.
+        - an argument 'x' with a description 'Description of `x`.';
+        - an argument '--y' with a description 'Description of `y`.'.
 
     The parser may also be provided with a help text (taken from the function's
     docstring) and default values for arguments.

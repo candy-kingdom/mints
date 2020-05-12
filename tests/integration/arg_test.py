@@ -1,17 +1,26 @@
 """Various tests for `candies.cli.args.arg.Arg`."""
 
-from typing import Callable, Any
+from typing import Any
 
-from candies.cli.cli import cli
+import pytest
+
+from candies.cli.cli import cli, CLI
 from candies.cli.args.arg import Arg
 
 
-def execute(cli_: Callable, with_: str) -> Any:
+def execute(with_: str) -> Any:
     try:
-        return cli_(with_.split())
+        return cli(with_.split())
     # `BaseException`, because `argparse` calls `exit` on error.
     except BaseException as e:
         return e
+
+
+@pytest.fixture(autouse=True)
+def reset():
+    # Reset `cli` before each test
+    # as if we have just imported it.
+    globals()['cli'] = CLI()
 
 
 def test_no_arguments():
@@ -21,7 +30,7 @@ def test_no_arguments():
         return True
 
     # Act.
-    cx = execute(main, with_='')
+    cx = execute(with_='')
 
     # Assert.
     assert cx
@@ -34,7 +43,7 @@ def test_argument_without_annotation():
         return x
 
     # Act.
-    cx = execute(main, with_='whatever')
+    cx = execute(with_='whatever')
 
     # Assert.
     assert isinstance(cx, ValueError)
@@ -47,7 +56,7 @@ def test_one_arg():
         return x
 
     # Act.
-    cx = execute(main, with_='1')
+    cx = execute(with_='1')
 
     # Assert.
     assert cx == '1'
@@ -60,7 +69,7 @@ def test_one_arg_with_description():
         return x
 
     # Act.
-    cx = execute(main, with_='1')
+    cx = execute(with_='1')
 
     # Assert.
     assert cx == '1'
@@ -73,7 +82,7 @@ def test_two_args():
         return x, y
 
     # Act.
-    cx = execute(main, with_='1 2')
+    cx = execute(with_='1 2')
 
     # Assert.
     assert cx == ('1', '2')
@@ -86,7 +95,7 @@ def test_one_arg_with_default_value():
         return x
 
     # Act.
-    ex = execute(main, with_='')
+    ex = execute(with_='')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -99,7 +108,7 @@ def test_two_args_but_called_with_one():
         return x
 
     # Act.
-    ex = execute(main, with_='1 2')
+    ex = execute(with_='1 2')
 
     # Assert.
     assert isinstance(ex, BaseException)
@@ -112,7 +121,7 @@ def test_one_arg_but_called_with_two():
         return x
 
     # Act.
-    ex = execute(main, with_='1 2')
+    ex = execute(with_='1 2')
 
     # Assert.
     assert isinstance(ex, BaseException)
