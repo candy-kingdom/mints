@@ -89,22 +89,6 @@ class CLI:
         else:
             return run(args_or_func)
 
-    def command(self, *args, **kwargs):
-        """Defines a subcommand.
-
-        Consider looking at the documentation of the `Command.command` method
-        for more details.
-        """
-        return self.main.command(*args, **kwargs)
-
-    def help(self, *args, **kwargs):
-        """Defines a function to be called for `--help`.
-
-        Consider looking at the documentation of the `Command.help` method
-        for more details.
-        """
-        return self.main.help(*args, **kwargs)
-
     def parse(self, func: Callable[[str], Any]) -> Callable[[str], Any]:
         """Defines a parser function for a custom type.
 

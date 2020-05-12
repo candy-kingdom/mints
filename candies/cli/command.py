@@ -18,11 +18,11 @@ class Command:
         def git():
             ...
 
-        @cli.command
+        @git.command
         def fetch(remote: Arg):
             print(f'Fetching {remote}...')
 
-        @cli.command
+        @git.command
         def merge(branch: Arg):
             print(f'Merging {branch}...')
 
@@ -94,7 +94,7 @@ class Command:
             def magic(spell):
                 ...
 
-            @cli.help
+            @magic.help
             def help(command):
                 return f'Help for "{command.name}" is yet to be done. ' \
                        f'Please stand by.'

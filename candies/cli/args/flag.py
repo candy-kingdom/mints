@@ -28,7 +28,7 @@ class Flag:
         def git():
             ...
 
-        @cli.command
+        @git.command
         def status(short: Flag('Give the output in the short-format')):
             ...
     """
