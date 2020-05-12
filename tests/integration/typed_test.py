@@ -6,7 +6,7 @@ from candies.cli.args.arg import Arg
 from candies.cli.args.opt import Opt
 from candies.cli.cli import cli, CLI
 
-from tests.execution import execute, redirect_stderr, redirect_stdout
+from tests.execution import execute, redirect_stderr
 
 
 class Money:

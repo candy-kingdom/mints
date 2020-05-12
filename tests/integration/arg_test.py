@@ -7,7 +7,7 @@ import pytest
 from candies.cli.cli import cli, CLI
 from candies.cli.args.arg import Arg
 
-from tests.execution import execute, redirect_stderr, redirect_stdout
+from tests.execution import execute, redirect_stderr
 
 
 @pytest.fixture(autouse=True)
