@@ -1,3 +1,5 @@
+"""Various tests for `candies.cli.args.typed.Typed`."""
+
 from typing import Any, List
 
 import pytest
