@@ -88,6 +88,11 @@ def prefixes(signature: inspect.Signature) -> str:
     def prefix_of(x: inspect.Parameter) -> str:
         prefix = getattr(x.annotation, 'prefix', '-')
 
+        if prefix is None:
+            raise ValueError(f"Argument '{x.name}' has an invalid prefix "
+                             f"'{prefix}': "
+                             f"it is None")
+
         if prefix == '':
             raise ValueError(f"Argument '{x.name}' has an invalid prefix "
                              f"'{prefix}': "

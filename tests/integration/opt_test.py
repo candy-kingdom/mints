@@ -7,13 +7,7 @@ from candies.cli.args.arg import Arg
 from candies.cli.args.opt import Opt
 from candies.cli.args.flag import Flag
 
-
-def execute(with_: str):
-    try:
-        return cli(with_.split())
-    # `BaseException`, because `argparse` calls `exit` on error.
-    except BaseException as e:
-        return e
+from tests.execution import execute, redirect_stderr
 
 
 @pytest.fixture(autouse=True)
@@ -30,7 +24,7 @@ def test_one_opt():
         return x
 
     # Act.
-    cx = execute(with_='--x 1')
+    cx = execute(cli, '--x 1')
 
     # Assert.
     assert cx == '1'
@@ -43,7 +37,7 @@ def test_one_opt_with_description():
         return x
 
     # Act.
-    cx = execute(with_='--x 1')
+    cx = execute(cli, '--x 1')
 
     # Assert.
     assert cx == '1'
@@ -56,7 +50,7 @@ def test_one_opt_with_default_value():
         return x
 
     # Act.
-    cx = execute(with_='--x 1')
+    cx = execute(cli, '--x 1')
 
     # Assert.
     assert cx == '1'
@@ -69,7 +63,7 @@ def test_one_opt_with_default_value_but_not_specified_in_cli():
         return x
 
     # Act.
-    cx = execute(with_='')
+    cx = execute(cli, '')
 
     # Assert.
     assert cx == '2'
@@ -82,10 +76,11 @@ def test_one_opt_not_specified_in_cli():
         return x
 
     # Act.
-    ex = execute(with_='')
+    ex, err = execute(cli, '', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert 'required: --x' in err
 
 
 def test_one_opt_with_default_value_but_different_opt_specified_in_cli():
@@ -95,10 +90,11 @@ def test_one_opt_with_default_value_but_different_opt_specified_in_cli():
         return x
 
     # Act.
-    ex = execute(with_='--y 1')
+    ex, err = execute(cli, '--y 1', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert 'unrecognized arguments: --y 1' in err
 
 
 def test_one_opt_without_value():
@@ -108,10 +104,11 @@ def test_one_opt_without_value():
         return x
 
     # Act.
-    ex = execute(with_='--x')
+    ex, err = execute(cli, '--x', redirect_stderr)
 
     # Assert.
     assert isinstance(ex, BaseException)
+    assert 'argument --x: expected one argument' in err
 
 
 def test_two_opts():
@@ -121,7 +118,7 @@ def test_two_opts():
         return x, y
 
     # Act.
-    cx = execute(with_='--x 1 --y 2')
+    cx = execute(cli, '--x 1 --y 2')
 
     # Assert.
     assert cx == ('1', '2')
@@ -134,7 +131,7 @@ def test_two_opts_in_different_order():
         return x, y
 
     # Act.
-    cx = execute(with_='--y 2 --x 1')
+    cx = execute(cli, '--y 2 --x 1')
 
     # Assert.
     assert cx == ('1', '2')
@@ -147,7 +144,7 @@ def test_one_opt_before_flag():
         return x, y
 
     # Act.
-    cx = execute(with_='--x 1 --y')
+    cx = execute(cli, '--x 1 --y')
 
     # Assert.
     assert cx == ('1', True)
@@ -160,7 +157,7 @@ def test_one_opt_before_arg():
         return x, y
 
     # Act.
-    cx = execute(with_='--x 1 2')
+    cx = execute(cli, '--x 1 2')
 
     # Assert.
     assert cx == ('1', '2')
@@ -173,10 +170,11 @@ def test_one_opt_specified_without_value_but_another_flag():
         return x
 
     # Act.
-    ex = execute(with_='--x --y')
+    ex, err = execute(cli, '--x --y', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert '--x: expected one argument' in err
 
 
 def test_one_opt_with_implicit_short():
@@ -186,10 +184,11 @@ def test_one_opt_with_implicit_short():
         return xyz
 
     # Act.
-    ex = execute(with_='-x 1')
+    ex, err = execute(cli, '-x 1', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert 'required: --xyz' in err
 
 
 def test_one_opt_with_explicit_short():
@@ -199,7 +198,7 @@ def test_one_opt_with_explicit_short():
         return x
 
     # Act.
-    cx = execute(with_='-y 1')
+    cx = execute(cli, '-y 1')
 
     # Assert.
     assert cx == '1'
@@ -212,7 +211,7 @@ def test_opt_specified_twice():
         return x
 
     # Act.
-    cx = execute(with_='--x 1 --x 2')
+    cx = execute(cli, '--x 1 --x 2')
 
     # Assert.
     assert cx == '2'
@@ -225,7 +224,7 @@ def test_opt_with_custom_prefix():
         return x
 
     # Act.
-    cx = execute(with_='++x 1')
+    cx = execute(cli, '++x 1')
 
     # Assert.
     assert cx == '1'

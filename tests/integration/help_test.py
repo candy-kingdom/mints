@@ -9,30 +9,7 @@ from candies.cli.args.flag import Flag
 from candies.cli.cli import cli, CLI
 from candies.cli.command import Command
 
-
-class Output:
-    """Overrides the default `stdout`."""
-
-    def __init__(self):
-        self.text = ''
-
-    def write(self, text: str):
-        self.text += text
-
-
-def execute(with_: str) -> Output:
-    stdout = sys.stdout
-    output = sys.stdout = Output()
-
-    try:
-        cli(with_.split())
-    except SystemExit as ex:
-        if ex.code != 0:
-            raise
-
-    sys.stdout = stdout
-
-    return output
+from tests.execution import execute, redirect_stdout
 
 
 @pytest.fixture(autouse=True)
@@ -49,10 +26,10 @@ def test_default_help_without_description():
         pass
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert output.text.startswith('usage: main')
+    assert out.startswith('usage: main')
 
 
 def test_default_help_with_description():
@@ -62,10 +39,10 @@ def test_default_help_with_description():
         """Here is your help."""
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert 'Here is your help.' in output.text
+    assert 'Here is your help.' in out
 
 
 def test_default_help_with_one_argument():
@@ -75,10 +52,10 @@ def test_default_help_with_one_argument():
         return x
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert 'description of `x`' in output.text
+    assert 'description of `x`' in out
 
 
 def test_default_help_with_two_arguments():
@@ -89,11 +66,11 @@ def test_default_help_with_two_arguments():
         return x + y
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert 'description of `x`' in output.text
-    assert 'description of `y`' in output.text
+    assert 'description of `x`' in out
+    assert 'description of `y`' in out
 
 
 def test_default_help_with_one_flag():
@@ -103,10 +80,10 @@ def test_default_help_with_one_flag():
         return x
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert 'description of `x`' in output.text
+    assert 'description of `x`' in out
 
 
 def test_default_help_with_two_flags():
@@ -117,11 +94,11 @@ def test_default_help_with_two_flags():
         return x + y
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert 'description of `x`' in output.text
-    assert 'description of `y`' in output.text
+    assert 'description of `x`' in out
+    assert 'description of `y`' in out
 
 
 def test_default_help_for_subcommand():
@@ -135,12 +112,12 @@ def test_default_help_for_subcommand():
         pass
 
     # Act.
-    output_a = execute(with_='--help')
-    output_b = execute(with_='sub --help')
+    _, out_a = execute(cli, '--help', redirect_stdout)
+    _, out_b = execute(cli, 'sub --help', redirect_stdout)
 
     # Assert.
-    assert output_a.text.startswith('usage: main')
-    assert output_b.text.startswith('usage: main sub')
+    assert out_a.startswith('usage: main')
+    assert out_b.startswith('usage: main sub')
 
 
 def test_custom_help():
@@ -158,12 +135,12 @@ def test_custom_help():
         pass
 
     # Act.
-    output_a = execute(with_='--help')
-    output_b = execute(with_='sub --help')
+    _, out_a = execute(cli, '--help', redirect_stdout)
+    _, out_b = execute(cli, 'sub --help', redirect_stdout)
 
     # Assert.
-    assert output_a.text == 'main'
-    assert output_b.text.startswith('usage: main sub')
+    assert out_a == 'main'
+    assert out_b.startswith('usage: main sub')
 
 
 def test_custom_help_for_subcommand():
@@ -181,12 +158,12 @@ def test_custom_help_for_subcommand():
         return command.name
 
     # Act.
-    output_a = execute(with_='--help')
-    output_b = execute(with_='sub --help')
+    _, out_a = execute(cli, '--help', redirect_stdout)
+    _, out_b = execute(cli, 'sub --help', redirect_stdout)
 
     # Assert.
-    assert output_a.text.startswith('usage: main')
-    assert output_b.text == 'sub'
+    assert out_a.startswith('usage: main')
+    assert out_b == 'sub'
 
 
 def test_help_for_argument_with_whitespace_description():
@@ -196,10 +173,10 @@ def test_help_for_argument_with_whitespace_description():
         pass
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert output.text.startswith('usage: main')
+    assert out.startswith('usage: main')
 
 
 def test_help_for_argument_with_newline_description():
@@ -209,7 +186,7 @@ def test_help_for_argument_with_newline_description():
         pass
 
     # Act.
-    output = execute(with_='--help')
+    _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert output.text.startswith('usage: main')
+    assert out.startswith('usage: main')
