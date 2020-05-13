@@ -25,49 +25,6 @@ def reset():
     globals()['cli'] = CLI()
 
 
-def test_existent_command_name():
-    # Arrange.
-    @cli
-    def main():
-        pass
-
-    @main.command
-    def one():
-        pass
-
-    @main.command
-    def two():
-        pass
-
-    @one.command
-    def a():
-        return True
-
-    @one.command
-    def b():
-        return False
-
-    @two.command
-    def x():
-        return True
-
-    @two.command
-    def y():
-        return False
-
-    # Act.
-    cx_a = execute(with_='one a')
-    cx_b = execute(with_='one b')
-    cx_x = execute(with_='two x')
-    cx_y = execute(with_='two y')
-
-    # Assert.
-    assert cx_a is True
-    assert cx_b is False
-    assert cx_x is True
-    assert cx_y is False
-
-
 def test_nonexistent_command_name():
     # Arrange.
     @cli
