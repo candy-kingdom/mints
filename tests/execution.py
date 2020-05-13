@@ -18,6 +18,13 @@ def execute(cli: Callable[[str], Any],
         redirect: An object that redirects an output into file-like object
             using context manager protocol.
 
+    Returns:
+        One of the following:
+            - a result of the CLI execution;
+            - an exception object if the execution has thrown an error;
+        If the `redirect` object is specified, the functions returns a tuple
+        with the actual result and redirect output as text.
+
     Examples:
         result = execute(cli, '--x')
         result, err = execute(cli, '--x', redirect_stderr)
