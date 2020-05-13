@@ -9,13 +9,7 @@ from candies.cli.args.opt import Opt
 from candies.cli.args.flag import Flag
 from candies.cli.cli import cli, CLI
 
-
-def execute(with_: str) -> Any:
-    try:
-        return cli(with_.split())
-    # `SystemExit`, because `argparse` calls `exit` on error.
-    except SystemExit as e:
-        return e
+from tests.execution import execute
 
 
 @pytest.fixture(autouse=True)
@@ -40,7 +34,7 @@ def test_nonexistent_command_name():
         pass
 
     # Act.
-    cx = execute(with_='three')
+    cx = execute(cli, 'three')
 
     # Assert.
     assert isinstance(cx, SystemExit)
@@ -69,7 +63,7 @@ def test_nonexistent_subcommand_name():
         pass
 
     # Act.
-    cx = execute(with_='one b')
+    cx = execute(cli, 'one b')
 
     # Assert.
     assert isinstance(cx, SystemExit)
@@ -90,7 +84,7 @@ def test_multiple_subcommands():
         return z
 
     # Act.
-    cx = execute(with_='--x first 1 second --z 2')
+    cx = execute(cli, '--x first 1 second --z 2')
 
     # Assert.
     assert cx == 2
@@ -107,7 +101,7 @@ def test_one_command_without_arguments():
         return True
 
     # Act.
-    cx = execute(with_='sub')
+    cx = execute(cli, 'sub')
 
     # Assert.
     assert cx is True
@@ -124,7 +118,7 @@ def test_one_command_with_arguments():
         return x, y, z
 
     # Act.
-    cx = execute(with_='sub 1 --y 2 --z')
+    cx = execute(cli, 'sub 1 --y 2 --z')
 
     # Assert.
     assert cx == (1, 2, True)
@@ -145,8 +139,8 @@ def test_two_commands_without_arguments():
         return False
 
     # Act.
-    cx_a = execute(with_='one')
-    cx_b = execute(with_='two')
+    cx_a = execute(cli, 'one')
+    cx_b = execute(cli, 'two')
 
     # Assert.
     assert cx_a is True
@@ -168,8 +162,8 @@ def test_two_commands_with_same_arguments():
         return -x, -y, z
 
     # Act.
-    cx_a = execute(with_='one 1 --y 2 --z')
-    cx_b = execute(with_='two 1 --y 2 --z')
+    cx_a = execute(cli, 'one 1 --y 2 --z')
+    cx_b = execute(cli, 'two 1 --y 2 --z')
 
     # Assert.
     assert cx_a == (+1, +2, True)
@@ -191,8 +185,8 @@ def test_two_commands_with_different_arguments():
         return -a, -b, c
 
     # Act.
-    cx_a = execute(with_='one 1 --y 2 --z')
-    cx_b = execute(with_='two 1 --b 2 --c')
+    cx_a = execute(cli, 'one 1 --y 2 --z')
+    cx_b = execute(cli, 'two 1 --b 2 --c')
 
     # Assert.
     assert cx_a == (+1, +2, True)

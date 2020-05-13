@@ -7,13 +7,7 @@ import pytest
 from candies.cli.cli import cli, CLI
 from candies.cli.args.arg import Arg
 
-
-def execute(with_: str) -> Any:
-    try:
-        return cli(with_.split())
-    # `BaseException`, because `argparse` calls `exit` on error.
-    except BaseException as e:
-        return e
+from tests.execution import execute, redirect_stderr
 
 
 @pytest.fixture(autouse=True)
@@ -23,30 +17,31 @@ def reset():
     globals()['cli'] = CLI()
 
 
-def test_no_arguments():
+def test_no_args():
     # Arrange.
     @cli
     def main():
         return True
 
     # Act.
-    cx = execute(with_='')
+    cx = execute(cli, with_='')
 
     # Assert.
     assert cx
 
 
-def test_argument_without_annotation():
+def test_arg_without_annotation():
     # Arrange.
     @cli
     def main(x):
         return x
 
     # Act.
-    cx = execute(with_='whatever')
+    ex = execute(cli, with_='')
 
     # Assert.
-    assert isinstance(cx, ValueError)
+    assert isinstance(ex, ValueError)
+    assert "'x' must have an annotation" in str(ex)
 
 
 def test_one_arg():
@@ -56,7 +51,7 @@ def test_one_arg():
         return x
 
     # Act.
-    cx = execute(with_='1')
+    cx = execute(cli, with_='1')
 
     # Assert.
     assert cx == '1'
@@ -69,7 +64,7 @@ def test_one_arg_with_description():
         return x
 
     # Act.
-    cx = execute(with_='1')
+    cx = execute(cli, with_='1')
 
     # Assert.
     assert cx == '1'
@@ -82,7 +77,7 @@ def test_two_args():
         return x, y
 
     # Act.
-    cx = execute(with_='1 2')
+    cx = execute(cli, with_='1 2')
 
     # Assert.
     assert cx == ('1', '2')
@@ -95,23 +90,25 @@ def test_one_arg_with_default_value():
         return x
 
     # Act.
-    ex = execute(with_='')
+    ex, err = execute(cli, '', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert "required: x" in err
 
 
 def test_two_args_but_called_with_one():
     # Arrange.
     @cli
-    def main(x: Arg):
-        return x
+    def main(x: Arg, y: Arg):
+        return x, y
 
     # Act.
-    ex = execute(with_='1 2')
+    ex, err = execute(cli, '1', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert 'required: y' in err
 
 
 def test_one_arg_but_called_with_two():
@@ -121,7 +118,8 @@ def test_one_arg_but_called_with_two():
         return x
 
     # Act.
-    ex = execute(with_='1 2')
+    ex, err = execute(cli, '1 2', redirect_stderr)
 
     # Assert.
-    assert isinstance(ex, BaseException)
+    assert isinstance(ex, SystemExit)
+    assert 'unrecognized arguments: 2' in err
