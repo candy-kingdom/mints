@@ -86,31 +86,19 @@ def test_nonexistent_command_name():
     def a():
         pass
 
-    @one.command
-    def b():
-        pass
-
     @two.command
     def x():
         pass
 
-    @two.command
-    def y():
-        pass
-
     # Act.
     cx_a = execute(with_='three')
-    cx_b = execute(with_='one c')
-    cx_c = execute(with_='two z')
-    cx_d = execute(with_='one x')
-    cx_e = execute(with_='two a')
+    cx_b = execute(with_='one b')
+    cx_c = execute(with_='one x')
 
     # Assert.
     assert isinstance(cx_a, SystemExit)
     assert isinstance(cx_b, SystemExit)
     assert isinstance(cx_c, SystemExit)
-    assert isinstance(cx_d, SystemExit)
-    assert isinstance(cx_e, SystemExit)
 
 
 def test_multiple_subcommands():
