@@ -82,23 +82,40 @@ def test_nonexistent_command_name():
     def two():
         pass
 
+    # Act.
+    cx = execute(with_='three')
+
+    # Assert.
+    assert isinstance(cx, SystemExit)
+
+
+def test_nonexistent_subcommand_name():
+    # Arrange.
+    @cli
+    def main():
+        pass
+
+    @main.command
+    def one():
+        pass
+
+    @main.command
+    def two():
+        pass
+
     @one.command
     def a():
         pass
 
     @two.command
-    def x():
+    def b():
         pass
 
     # Act.
-    cx_a = execute(with_='three')
-    cx_b = execute(with_='one b')
-    cx_c = execute(with_='one x')
+    cx = execute(with_='one b')
 
     # Assert.
-    assert isinstance(cx_a, SystemExit)
-    assert isinstance(cx_b, SystemExit)
-    assert isinstance(cx_c, SystemExit)
+    assert isinstance(cx, SystemExit)
 
 
 def test_multiple_subcommands():
