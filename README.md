@@ -1,4 +1,4 @@
-# Candy CLI
+# {Name}
 
 [![Build](https://github.com/candy-kingdom/cli/workflows/Build/badge.svg)](https://github.com/JoshuaLight/chalice-restful/actions)
 
@@ -6,11 +6,25 @@ _Clean and elegant CLI development kit._
 
 ## Overview
 
-Candy CLI is an alternative to Click. It provides ...
+{Name} is a micro-framework that allows you to build apps with CLI in declarative and natural way.
+It's a lightweight alternative to Click, Plac or Fire with the annotations based API.
 
-Consider a following example as a demonstration of Candy CLI capabilities:
+Consider a following example as a demonstration of {Name} capabilities:
 ```py
-# Some nice example here.
+# say.py
+
+from candies.cli import cli, Arg, Flag, Opt
+
+@cli
+def say(phrase: Arg, caps: Flag, times: Opt[int] = 1):
+    """Prints a phrase specified number of times."""
+
+    for i in range(0, times):
+        print(phrase.upper() if caps else phrase)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 ## Install
