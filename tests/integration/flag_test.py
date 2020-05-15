@@ -572,10 +572,23 @@ def test_two_flags_with_trailing_underscores_but_same_name():
     # Arrange.
     @cli
     def main(x_: Flag, x__: Flag):
-        return x__
+        return x_, x__
 
     # Act.
     ex, err = execute(cli, '--x', redirect_stderr)
 
     # Assert.
     assert '--x could match --x_, --x__' in err
+
+
+def test_two_flags_with_trailing_underscores_but_same_name_called_with_original_names():
+    # Arrange.
+    @cli
+    def main(x_: Flag, x__: Flag):
+        return x_, x__
+
+    # Act.
+    cx = execute(cli, '--x_ --x__')
+
+    # Assert.
+    assert cx == (True, True)
