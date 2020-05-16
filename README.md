@@ -6,7 +6,7 @@ _Clean and elegant CLI development kit._
 
 ## Overview
 
-{Name} is a micro-framework that allows you to build apps with CLI in declarative and natural way.
+{Name} is a micro-framework that allows you to build CLI apps in declarative and natural way.
 It's a lightweight alternative to Click, Plac or Fire with the annotations based API.
 
 Consider a following example as a demonstration of {Name} capabilities:
@@ -16,7 +16,9 @@ Consider a following example as a demonstration of {Name} capabilities:
 from candies.cli import cli, Arg, Flag, Opt
 
 @cli
-def say(phrase: Arg, caps: Flag, times: Opt[int] = 1):
+def say(phrase: Arg('A phrase to print.'),
+        caps:   Flag('Whether to print phrase in upper-case.'),
+        times:  Opt[int]('How many times to print.') = 1):
     """Prints a phrase specified number of times."""
 
     for i in range(0, times):
