@@ -29,7 +29,7 @@ def test_one_flag():
     cx = execute(cli, '--x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_one_flag_with_description():
@@ -42,7 +42,7 @@ def test_one_flag_with_description():
     cx = execute(cli, '--x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_one_flag_with_default_false():
@@ -55,7 +55,7 @@ def test_one_flag_with_default_false():
     cx = execute(cli, '--x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_one_flag_with_default_true():
@@ -68,7 +68,7 @@ def test_one_flag_with_default_true():
     cx = execute(cli, '--x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_one_flag_with_default_int():
@@ -95,7 +95,7 @@ def test_one_flag_not_specified():
     cx = execute(cli, '')
 
     # Assert.
-    assert cx == False
+    assert cx is False
 
 
 def test_one_flag_not_specified_with_default_false():
@@ -108,7 +108,7 @@ def test_one_flag_not_specified_with_default_false():
     cx = execute(cli, '')
 
     # Assert.
-    assert cx == False
+    assert cx is False
 
 
 def test_one_flag_not_specified_with_default_true():
@@ -121,7 +121,7 @@ def test_one_flag_not_specified_with_default_true():
     cx = execute(cli, '')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_two_flags():
@@ -252,7 +252,7 @@ def test_one_flag_with_explicit_short():
     cx = execute(cli, '-a')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_one_flag_with_explicit_short_and_description():
@@ -265,7 +265,7 @@ def test_one_flag_with_explicit_short_and_description():
     cx = execute(cli, '-a')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_two_flags_with_same_implicit_shorts():
@@ -374,7 +374,7 @@ def test_flag_with_custom_prefix():
     cx = execute(cli, '++x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_flag_with_custom_prefix_and_short():
@@ -400,7 +400,7 @@ def test_flag_with_custom_but_default_prefix():
     cx = execute(cli, '--x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
 
 
 def test_flag_with_letter_prefix():
@@ -526,4 +526,69 @@ def test_flag_of_subcommand_with_custom_prefix():
     cx = execute(cli, 'sub ++x')
 
     # Assert.
-    assert cx == True
+    assert cx is True
+
+
+def test_flag_with_trailing_underscore():
+    # Arrange.
+    @cli
+    def main(x_: Flag):
+        return x_
+
+    # Act.
+    cx = execute(cli, '--x')
+
+    # Assert.
+    assert cx is True
+
+
+def test_flag_with_two_trailing_underscores():
+    # Arrange.
+    @cli
+    def main(x__: Flag):
+        return x__
+
+    # Act.
+    cx = execute(cli, '--x')
+
+    # Assert.
+    assert cx is True
+
+
+def test_flag_with_trailing_underscore_called_with_original_name():
+    # Arrange.
+    @cli
+    def main(x_: Flag):
+        return x_
+
+    # Act.
+    cx = execute(cli, '--x_')
+
+    # Assert.
+    assert cx is True
+
+
+def test_two_flags_with_trailing_underscores_but_same_name():
+    # Arrange.
+    @cli
+    def main(x_: Flag, x__: Flag):
+        return x_, x__
+
+    # Act.
+    ex, err = execute(cli, '--x', redirect_stderr)
+
+    # Assert.
+    assert '--x could match --x_, --x__' in err
+
+
+def test_two_flags_with_trailing_underscores_but_same_name_called_with_original_names():
+    # Arrange.
+    @cli
+    def main(x_: Flag, x__: Flag):
+        return x_, x__
+
+    # Act.
+    cx = execute(cli, '--x_ --x__')
+
+    # Assert.
+    assert cx == (True, True)
