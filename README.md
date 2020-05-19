@@ -67,16 +67,16 @@ $ pip install candy-cli
 
 ## Getting started
 
-In general, writing a CLI app is very similar to writing a "vanilla" function, only the signature consist of different types of parameters.
+In general, writing a CLI app is very similar to writing a "vanilla" function.
 {Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
 Consider the following example:
 ```py
 # print.py
 
-from candies.cli import cli
+from candies.cli import cli, Arg
 
 @cli
-def main(phrase):
+def entry(phrase: Arg):
     print(phrase)
 
 
@@ -90,18 +90,22 @@ $ python3 print.py "Hello, world!"
 Hello, world!
 ```
 
-So, the main idea here is very simple: you use the `cli` decorator to wrap an entry point of the application, and then use the `cli()` call to start the app.
-In the following sections we will discuss three different types of arguments and how they are expressed in the {Name}.
+The main idea is very simple: you use the `cli` decorator to wrap a function that acts as an entry point of the application (`entry`), and then use the `cli()` to make things running.
+What types of arguments can be passed to the entry point depend on the signature of the function and the annotations being used to describe parameters.
 
-### Arguments
+In the following section we'll discuss how to implement positional arguments, flags and options for your CLI.
+
+### Parameters
+
+#### `Arg`
 
 ...
 
-### Flags
+#### `Flag`
 
 ...
 
-### Options
+#### `Opt`
 
 ...
 
