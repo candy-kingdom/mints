@@ -30,21 +30,21 @@ if __name__ == '__main__':
 ```
 
 It then can be used like that:
-```shell
+```
 $ python3 say.py "Hi!" 
 Hi!
 ```
-```shell
+```
 $ python3 say.py "Hi!" --caps
 HI!
 ```
-```shell
+```
 $ python3 say.py "Hi!" --times 3
 Hi!
 Hi!
 Hi!
 ```
-```shell
+```
 $ python3 say.py --help
 usage: say [-h] [--caps] [--times TIMES] phrase
 
@@ -61,7 +61,7 @@ optional arguments:
 
 ## Install
 
-```sh
+```
 $ pip install candy-cli
 ```
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 ```
 
 The script can be executed as a command line app:
-```py
+```
 $ python3 print.py "Hello, world!"
 Hello, world!
 ```
