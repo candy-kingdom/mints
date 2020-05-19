@@ -51,12 +51,12 @@ usage: say [-h] [--caps] [--times TIMES] phrase
 Prints a phrase specified number of times.
 
 positional arguments:
-  phrase         A phrase to print.
+  phrase         a phrase to print
 
 optional arguments:
   -h, --help     show this help message and exit
-  --caps         Whether to print phrase in upper-case.
-  --times TIMES
+  --caps         whether to print phrase in upper-case
+  --times TIMES  how many times to print
 ```
 
 ## Install
@@ -66,6 +66,32 @@ $ pip install candy-cli
 ```
 
 ## Getting started
+
+In general, writing a CLI app is very similar to writing a "vanilla" function, only the signature consist of different types of parameters.
+{Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
+Consider the following example:
+```py
+# print.py
+
+from candies.cli import cli
+
+@cli
+def main(phrase):
+    print(phrase)
+
+
+if __name__ == '__main__':
+    cli()
+```
+
+The script can be executed as a command line app:
+```py
+$ python3 print.py "Hello, world!"
+Hello, world!
+```
+
+So, the main idea here is very simple: you use the `cli` decorator to wrap an entry point of the application, and then use the `cli()` call to start the app.
+In the following sections we will discuss three different types of arguments and how they are expressed in the {Name}.
 
 ### Arguments
 
