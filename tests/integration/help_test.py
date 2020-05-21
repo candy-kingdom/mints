@@ -1,7 +1,5 @@
 """Various tests for `candies.cli.command.Command.help`."""
 
-import sys
-
 import pytest
 
 from candies.cli.args.arg import Arg
@@ -91,6 +89,34 @@ def test_default_help_with_two_flags():
     @cli
     def main(x: Flag('description of `x`'),
              y: Flag('description of `y`')):
+        return x + y
+
+    # Act.
+    _, out = execute(cli, '--help', redirect_stdout)
+
+    # Assert.
+    assert 'description of `x`' in out
+    assert 'description of `y`' in out
+
+
+def test_default_help_with_one_typed_argument():
+    # Arrange.
+    @cli
+    def main(x: Arg[int]('Description of `x`.')):
+        return x
+
+    # Act.
+    _, out = execute(cli, '--help', redirect_stdout)
+
+    # Assert.
+    assert 'Description of `x`.' in out
+
+
+def test_default_help_with_two_typed_arguments():
+    # Arrange.
+    @cli
+    def main(x: Arg[int]('description of `x`'),
+             y: Arg[int]('description of `y`')):
         return x + y
 
     # Act.
