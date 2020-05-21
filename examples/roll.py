@@ -36,7 +36,7 @@ class Die:
 def roll(dice: Arg[List[Die]]('A list of dice to roll.')):
     """Roll dice.
 
-    A list of dice should be specified using the dice notation: [m]d{n}.
+    Each die should be specified using the dice notation: [m]d{n}.
     For example,
         - 2d6  means "roll 2 6-sided dice",
         - 1d10 means "roll 1 10-sided die",
