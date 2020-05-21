@@ -102,14 +102,14 @@ def test_default_help_with_two_flags():
 def test_default_help_with_one_typed_argument():
     # Arrange.
     @cli
-    def main(x: Arg[int]('Description of `x`.')):
+    def main(x: Arg[int]('description of `x`')):
         return x
 
     # Act.
     _, out = execute(cli, '--help', redirect_stdout)
 
     # Assert.
-    assert 'Description of `x`.' in out
+    assert 'description of `x`' in out
 
 
 def test_default_help_with_two_typed_arguments():
