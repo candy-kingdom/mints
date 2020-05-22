@@ -225,12 +225,6 @@ def configured(new: Callable,
 
         config = {}
 
-        description = getattr(parameter.annotation, 'description', None)
-        if description is not None:
-            # Here the following issue is addressed:
-            # https://bugs.python.org/issue38584.
-            config['help'] = description if not description.isspace() else ''
-
         type = getattr(parameter.annotation, 'type', None)
         if type is not None:
             if getattr(type, '__origin__', None) is list:
@@ -252,6 +246,12 @@ def configured(new: Callable,
             kind = parameter.annotation.kind
         else:
             kind = parameter.annotation
+
+        description = getattr(kind, 'description', None)
+        if description is not None:
+            # Here the following issue is addressed:
+            # https://bugs.python.org/issue38584.
+            config['help'] = description if not description.isspace() else ''
 
         if is_(kind, Arg):
             configure_arg(parameter, kind, config)
