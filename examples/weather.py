@@ -45,7 +45,7 @@ class API:
         """Requests a forecast for the specified city."""
         return self.request('forecast', q=f'{city},{country}', cnt=lines)
 
-    def request(self, endpoint: str, **kwargs: Any) -> Any:
+    def request(self, endpoint: str, **params: Any) -> Any:
         """Performs a request to the OpenWeather API."""
 
         url = self.url
@@ -53,7 +53,7 @@ class API:
         url = urljoin(url, f'?appid={self.key}')
 
         try:
-            response = requests.get(url, params=kwargs)
+            response = requests.get(url, params=params)
             response.raise_for_status()
         except requests.HTTPError as error:
             exit(f'{error.response.status_code} HTTP error '
