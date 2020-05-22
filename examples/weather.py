@@ -66,7 +66,7 @@ class API:
 @cli
 def weather(city:     Arg('A city to request weather or a forecast for.'),
             country:  Arg('A country where the city is located.'),
-            forecast: Flag('Whether to provide a forecast for 5 days with 3 hour period.'),
+            forecast: Flag('Whether to provide a forecast.'),
             lines:    Opt('The amount of lines to be included in a forecast.') = None,
             key:      Opt('The OpenWeather API key.') = None):
     """Find out the current weather or a forecast in any city.
@@ -75,6 +75,11 @@ def weather(city:     Arg('A city to request weather or a forecast for.'),
     a specified city using the OpenWeather API. It requires an
     API key to work (the key can be specified either directly via
     the `--key` option or in an environment variable "WEATHER_KEY").
+
+    If the `--forecast` flag is provided, the CLI will request a
+    forecast for 5 days with 3-hour period. By default, 40 lines
+    of data are returned. This can be controlled with the `--lines`
+    option.
     """
 
     def celsius(kelvin: float) -> float:
