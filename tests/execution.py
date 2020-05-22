@@ -1,12 +1,12 @@
-from typing import Any, Callable, ContextManager, Optional
+from typing import Any, Callable, ContextManager, Optional, List
 import contextlib
 import io
-import sys
 
 
-def execute(cli: Callable[[str], Any],
+def execute(cli: Callable[[List[str]], Any],
             with_: str,
-            redirect: Optional[ContextManager] = None) -> Any:
+            redirect: Optional[Callable[[Any], ContextManager]] = None) \
+        -> Any:
     """Executes the CLI callable with the specified command line.
 
     Supports redirection of either `sys.stdout` or `sys.stderr` for testing
@@ -35,7 +35,7 @@ def execute(cli: Callable[[str], Any],
             redirecting both `sys.stdout` and `sys.stderr`.
     """
 
-    def execute_with(redirect: ContextManager):
+    def execute_with(redirect: Callable[[Any], ContextManager]):
         output = io.StringIO()
 
         with redirect(output):
