@@ -1,6 +1,6 @@
 """An example of a simple CLI for rolling dice.
 
-The example demonstrates a usage of a typed argument
+The example demonstrates the usage of a typed argument
 accepting a list of custom objects (instances of `Die`).
 
 Usage:
@@ -42,10 +42,6 @@ def roll(dice: Arg[List[Die]]('A list of dice to roll.')):
         - 1d10 means "roll 1 10-sided die",
         - d20  means "roll 1 20-sided die".
     """
-
-    if not dice:
-        exit('Try specifying at least a single die to roll.')
-
     for die in dice:
         print(' '.join(map(str, die.roll())))
 
