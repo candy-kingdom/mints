@@ -67,7 +67,7 @@ $ pip install candy-cli
 
 ## Getting started
 
-In general, writing a CLI app is very similar to writing a "vanilla" function.
+In general, writing a CLI app is very similar to writing a regular function.
 {Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
 Consider the following example:
 ```py
