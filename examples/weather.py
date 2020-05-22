@@ -5,18 +5,18 @@ as well as descriptions and default values of arguments and options.
 
 Usage:
     $ python weather.py Kharkiv Ukraine
-    Kharkiv, Ukraine as of 2020-05-22 08:42:58:
-      11.5°C (feels like 8.2°C)
-      scattered clouds
+    As of 2020-05-22 08:42:58:
+        11.5°C (feels like 8.2°C)
+        scattered clouds
 
     $ python weather.py Kharkiv Ukraine --forecast --lines 2
-    Kharkiv, Ukraine as of 2020-05-22 09:00:00:
-      9.5°C (feels like 6.3°C)
-      scattered clouds
+    As of 2020-05-22 09:00:00:
+        9.5°C (feels like 6.3°C)
+        scattered clouds
 
-    Kharkiv, Ukraine as of 2020-05-22 12:00:00:
-      12.2°C (feels like 7.7°C)
-      light rain
+    As of 2020-05-22 12:00:00:
+        12.2°C (feels like 7.7°C)
+        light rain
 """
 
 from datetime import datetime
@@ -86,9 +86,9 @@ def weather(city:     Arg('A city to request weather or a forecast for.'),
         feel = celsius(entry['main']['feels_like'])
         desc = ', '.join(x['description'] for x in entry['weather'])
 
-        return f'{city}, {country} as of {time}: \n' \
-               f'  {temp}°C (feels like {feel}°C) \n' \
-               f'  {desc}'
+        return f'As of {time}: \n' \
+               f'    {temp}°C (feels like {feel}°C) \n' \
+               f'    {desc}'
 
     key = key or environ.get('WEATHER_KEY')
     api = API(key)
