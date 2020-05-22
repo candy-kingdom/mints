@@ -91,9 +91,9 @@ Hello, world!
 ```
 
 The main idea is very simple: you use the `cli` decorator to wrap a function that acts as an entry point of the application (`entry`), and then use the `cli()` to make things running.
-What types of arguments can be passed to the entry point depend on the signature of the function and the annotations being used to describe parameters.
+`Arg` is used to annotate positional arguments of the CLI.
 
-In the following section we'll discuss how to implement positional arguments, flags and options for your CLI.
+In the following section we'll discuss more deeply how to implement different types of parameters in {Name}.
 
 ### Parameters
 
