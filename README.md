@@ -97,15 +97,72 @@ In the following section we'll discuss more deeply how to implement different ty
 
 ### Parameters
 
+There are three different type annotations that could be used to represent positional arguments, flags and options.
+
 #### `Arg`
 
-...
+`Arg` is a type annotation for positional arguments.
+Annotate a parameter of a function with it to make it positional.
+
+Positional arguments work in same way as in programming languages.
+Consider this function:
+```py
+# test.py
+
+@cli
+def entry(x: Arg, y: Arg):
+    ...
+```
+
+It allows the following call in shell:
+```
+$ python test.py 1 2
+```
+
+But not:
+```
+$ python test.py 1
+```
+
+Or:
+```
+$ python test.py 1 2 3
+```
+
+It's possible though to add a default value for an argument:
+```py
+# test.py
+
+@cli
+def entry(x: Arg, y: Arg = 2):
+    ...
+```
+
+To support the following:
+```
+$ python test.py 1
+```
+
+Note: it's not possible to define something like this:
+```py
+# test.py
+
+@cli
+def entry(x: Arg = 1, y: Arg):
+    ...
+```
+
+The function signature is not supported even in Python.
 
 #### `Flag`
 
 ...
 
 #### `Opt`
+
+...
+
+#### Types
 
 ...
 
