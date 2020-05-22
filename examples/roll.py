@@ -21,7 +21,7 @@ from candies.cli import cli, Arg
 
 
 class Die:
-    """Represents a die to roll."""
+    """A die to roll."""
 
     def __init__(self, sides: int, rolls: int):
         self._sides = sides
