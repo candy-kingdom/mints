@@ -102,31 +102,26 @@ There are three different type annotations that could be used to represent posit
 #### `Arg`
 
 `Arg` is a type annotation for positional arguments.
-Annotate a parameter of a function with it to make it positional.
+In CLI, positional arguments work in same way as in programming languages.
 
-Positional arguments work in same way as in programming languages.
 Consider this function:
 ```py
 # test.py
 
 @cli
 def entry(x: Arg, y: Arg):
-    ...
+    print(x, y)
 ```
 
 It allows the following call in shell:
 ```
 $ python test.py 1 2
+(1, 2)
 ```
 
 But not:
 ```
 $ python test.py 1
-```
-
-Or:
-```
-$ python test.py 1 2 3
 ```
 
 It's possible though to add a default value for an argument:
@@ -135,12 +130,13 @@ It's possible though to add a default value for an argument:
 
 @cli
 def entry(x: Arg, y: Arg = 2):
-    ...
+    print(some)
 ```
 
 To support the following:
 ```
 $ python test.py 1
+(1, 2)
 ```
 
 Note: it's not possible to define something like this:
@@ -149,20 +145,76 @@ Note: it's not possible to define something like this:
 
 @cli
 def entry(x: Arg = 1, y: Arg):
-    ...
+    print(some)
 ```
 
 The function signature is not supported even in Python.
 
 #### `Flag`
 
-...
+`Flag` is a type annotation for flags.
+In CLI, flags are boolean arguments that represent a turned off or turned on behaviour.
+Unlike positional ones, they could be specified in command line only with special syntax.
+
+For example, the following function signature:
+```py
+# test.py
+
+@cli
+def entry(some: Flag):
+    print(some)
+```
+
+Could be called from command line as follows:
+```
+$ python test.py --some
+True
+```
+
+But it's also possible to invoke the CLI without the flag:
+```
+$ python test.py
+False
+```
+
+Flags also support default values, but it doesn't make much sense.
+Default value of `False` is already set implicitly for each flag.
+Default value of `True` makes a flag to be always true.
+
+For example, one could define:
+```py
+# test.py
+
+@cli
+def entry(some: Flag = True):
+    print(some)
+```
+
+But this makes the flag `some` useless:
+```
+$ python test.py --some
+True
+$ python test.py
+True
+```
 
 #### `Opt`
 
 ...
 
-#### Types
+#### Short names
+
+...
+
+#### Description
+
+...
+
+#### Type
+
+...
+
+#### Parsing
 
 ...
 
