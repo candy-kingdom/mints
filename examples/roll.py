@@ -42,6 +42,11 @@ def roll(dice: Arg[List[Die]]('A list of dice to roll.')):
         - 1d10 means "roll 1 10-sided die",
         - d20  means "roll 1 20-sided die".
     """
+
+    if not dice:
+        exit('You should specify at least a single die to roll. \n'
+             'Try, for example, "1d6" or "2d6 d20".')
+
     for die in dice:
         print(' '.join(map(str, die.roll())))
 
