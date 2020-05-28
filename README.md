@@ -165,7 +165,7 @@ def entry(some: Flag):
     print(some)
 ```
 
-Could be called from command line as follows:
+Could be called from the command line as follows:
 ```
 $ python test.py --some
 True
@@ -200,31 +200,202 @@ True
 
 #### `Opt`
 
-...
+`Flag` is a type annotation for options.
+In CLI, options are simply named arguments or flags with values.
 
-#### Short names
+For example, the following function signature:
+```py
+# test.py
 
-...
+@cli
+def entry(some: Opt):
+    print(some)
+```
 
-#### Description
+Could be called from the command line as follows:
+```
+$ python test.py --some 1
+1
+```
 
-...
+Note: unlike with flags, it's not possible to _not_ specify the option by default.
+```
+$ python test.py --some
+usage: entry [-h] --some SOME
+entry: error: the following arguments are required: --some
+```
 
-#### Type
+But it's possible to specify the default value for `Opt`:
+```py
+# test.py
 
-...
+@cli
+def entry(some: Opt = 1):
+    print(some)
+```
 
-#### Parsing
+So it's now possible to call the script as follows:
+```
+$ python test.py
+1
+```
 
-...
+#### Help page
+
+Each CLI in {Name} has a built-in help page, which is automatically generated.
+
+For example, for the following function:
+```py
+# test.py
+
+@cli
+def entry(some: Arg):
+    print(some)
+```
+
+It's possible to invoke the help page using the flag `--help`:
+```
+$ python test.py --help
+usage: entry [-h] some 
+
+positional arguments:
+  some
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+Note the lack of the overall program description as well as the description of the `some` argument.
+
+To override the program description, one could write a simple doc-comment for the CLI function:
+To assign a description to an argument, the `description` parameter of the argument constructor type should be used.
+
+Consider the following example as a demonstration of both possibilities:
+```py
+# test.py
+
+@cli
+def entry(some: Arg('some argument')):
+    """A simple demonstration program."""
+
+    print(some)
+```
+
+This produces a following help page:
+```
+$ python test.py --help
+usage: entry [-h] some 
+
+A simple demonstration program.
+
+positional arguments:
+  some        some argument
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+#### Short name
+
+Usually, both flags and options come with a shortcut syntax.
+For example, instead of writing:
+```
+$ python test.py --some 1
+```
+
+One could write:
+```
+$ python test.py -s 1
+```
+
+To define a shortcut letter for a flag or an option, the `short` parameter of either `Flag` or `Opt` annotations should be used:
+```py
+# test.py
+
+@cli
+def entry(some: Flag(short='s')):
+    print(some)
+```
+
+This allows invoking the CLI with the following syntax:
+```
+$ python test.py -s
+True
+```
+
+#### Prefix
+
+Flags and options are usually called with the `-` prefix (in short and long variations).
+To override this behaviour, the `prefix` parameter of either `Flag` or `Opt` annotations should be used.
+
+Consider the following example:
+```py
+# test.py
+
+@cli
+def entry(some: Flag(prefix='+')):
+    print(some)
+```
+
+Then the command line interface could be invoked as follows:
+```
+$ python test.py ++some
+True
+```
+
+#### Types
+
+By default, the value that comes from the CLI, if it's an `Opt` or an `Arg`, is of `str` type.
+
+Consider the following example:
+```py
+# test.py
+
+@cli
+def entry(some: Arg):
+    print(type(some))
+```
+
+If an integer value is passed to the command line, the following output is produced:
+```
+$ python test.py 1
+<class 'str'>
+```
+
+To enforce the value to be an `int`, the following syntax should be used:
+```py
+# test.py
+
+@cli
+def entry(some: Arg[int]):
+    print(type(some))
+```
+
+This makes `some` to be an integer:
+```
+$ python test.py 1
+<class 'int'>
+```
+
+But sometimes, a custom type should be parsed from a command line.
+This could be done by defining a parser for one:
+```py
+# test.py
+
+@cli
+def entry(some: Arg[Custom]):
+    ...
+
+
+@cli.parse
+def custom(x: str) -> Custom:
+    ...
+```
 
 ### Commands
 
 ...
 
-### Help
-
-...
 
 ## Learn more
 
