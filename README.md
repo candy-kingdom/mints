@@ -33,18 +33,12 @@ It then can be used like that:
 ```
 $ python3 say.py "Hi!" 
 Hi!
-```
-```
 $ python3 say.py "Hi!" --caps
 HI!
-```
-```
 $ python3 say.py "Hi!" --times 3
 Hi!
 Hi!
 Hi!
-```
-```
 $ python3 say.py --help
 usage: say [-h] [--caps] [--times TIMES] phrase
 
