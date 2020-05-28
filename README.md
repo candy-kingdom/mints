@@ -171,7 +171,7 @@ $ python test.py
 False
 ```
 
-Flags also support default values, but it doesn't make much sense.
+Flags also support default values, but that doesn't make much sense.
 Default value of `False` is already set implicitly for each flag.
 Default value of `True` makes a flag to be always true.
 
