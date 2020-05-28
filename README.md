@@ -9,7 +9,7 @@ _Clean and elegant CLI development kit._
 {Name} is a micro-framework that allows you to build CLI apps in declarative and natural way.
 It's a lightweight alternative to Click, Plac or Fire with the annotations based API.
 
-Consider a following example as a demonstration of {Name} capabilities:
+Consider the following example as a demonstration of {Name} capabilities:
 ```py
 # say.py
 
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     cli()
 ```
 
-It then can be used like that:
+It then can be used as follows:
 ```
 $ python3 say.py "Hi!" 
 Hi!
