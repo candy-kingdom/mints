@@ -394,12 +394,65 @@ def custom(x: str) -> Custom:
 
 ### Commands
 
-...
+Complex command line interfaces like `git` have subcommands like `git status`, `git pull`, `git push`, etc.
+These subcommands act as separate CLIs and, thus, are separate functions in {Name}.
 
+Consider the following example as a fake `git` CLI:
+```py
+# git.py
+
+@cli
+def entry():
+    ...
+
+@entry.command
+def pull():
+    if rebase:
+        print('pulling with rebase')
+    else:
+        print('pulling')
+
+
+@entry.command
+def push():
+    print('pushing')
+```
+
+This CLI could be invoked as follows:
+```
+$ python git.py pull
+pulling
+$ python git.py pull --rebase
+pulling with rebase
+$ python git.py push
+pushing
+```
+
+Note: it's possible to have a deeper hierarchies of subcommands.
+For example, the `dotnet` CLI tool could be called as [`dotnet tool install ...`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install).
+
+To mimic that in {Name}, the following structure should be used:
+```py
+# dotnet.py
+
+@cli
+def entry():
+    ...
+
+
+@entry.command
+def tool():
+    ...
+
+
+@tool.command
+def install():
+    ...
+```
 
 ## Learn more
 
-...
+Learn more from concrete and real-life [examples](https://github.com/candy-kingdom/cli/blob/master/examples/).
 
 ## License
 
