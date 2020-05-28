@@ -148,7 +148,7 @@ The function signature is not supported even in Python.
 
 `Flag` is a type annotation for flags.
 In CLI, flags are boolean arguments that represent a turned off or turned on behaviour.
-Unlike positional ones, they could be specified in command line only with special syntax.
+Unlike positional ones, they could be specified in a command line only with special syntax.
 
 For example, the following function signature:
 ```py
