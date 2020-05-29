@@ -6,7 +6,7 @@ _Clean and elegant CLI development kit._
 
 ## Overview
 
-{Name} is a micro-framework that allows you to build CLI apps in declarative and natural way.
+{Name} is a microframework that allows you to build CLI apps in declarative and natural way.
 It's a lightweight alternative to Click, Plac or Fire with the annotations based API.
 
 Consider the following example as a demonstration of {Name} capabilities:
