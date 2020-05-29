@@ -514,7 +514,7 @@ if __name__ == '__main__':
 
 ### Commands
 
-Complex command line interfaces like `git` have subcommands like `git status`, `git pull`, `git push`, etc.
+Complex command line interfaces like `git` have several subcommands: `git status`, `git pull`, `git push`, etc.
 These subcommands act as separate CLIs and, thus, are separate functions in {Name}.
 
 Consider the following example as a fake `git` CLI:
@@ -555,10 +555,10 @@ $ python git.py push
 pushing
 ```
 
-Note: it's possible to have a deeper hierarchies of subcommands.
-For example, the `dotnet` CLI tool could be called as [`dotnet tool install ...`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install).
+Note: it's possible to have deeper hierarchies of subcommands.
+For example, the `dotnet` CLI tool allows [`dotnet tool install {x}`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install) syntax.
 
-To mimic that in {Name}, the following structure should be used:
+This could be implemented in {Name} in a natural way:
 ```py
 # dotnet.py
 
