@@ -12,7 +12,7 @@ Consider the following example as a demonstration of {Name} capabilities:
 ```py
 # say.py
 
-from candies.cli import cli, Arg, Flag, Opt
+from {pyname} import cli, Arg, Flag, Opt
 
 @cli
 def say(phrase: Arg('a phrase to print'),
@@ -55,7 +55,7 @@ optional arguments:
 ## Install
 
 ```
-$ pip install candy-cli
+$ pip install {pipname}
 ```
 
 ## Getting started
@@ -66,7 +66,7 @@ Consider the following example:
 ```py
 # print.py
 
-from candies.cli import cli, Arg
+from {pyname} import cli, Arg
 
 @cli
 def entry(phrase: Arg):
@@ -101,9 +101,16 @@ Consider this function:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(x: Arg, y: Arg):
     print(x, y)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 It allows the following call in shell:
@@ -121,9 +128,16 @@ It's possible though to add a default value for an argument:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(x: Arg, y: Arg = 2):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 To support the following:
@@ -136,9 +150,16 @@ Note: it's not possible to define something like this:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(x: Arg = 1, y: Arg):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 The function signature is not supported even in Python.
@@ -153,9 +174,16 @@ For example, the following function signature:
 ```py
 # test.py
 
+from {pyname} import cli, Flag
+
+
 @cli
 def entry(some: Flag):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 Could be called from the command line as follows:
@@ -178,9 +206,16 @@ For example, one could define:
 ```py
 # test.py
 
+from {pyname} import cli, Flag
+
+
 @cli
 def entry(some: Flag = True):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 But this makes the flag `some` useless:
@@ -200,9 +235,16 @@ For example, the following function signature:
 ```py
 # test.py
 
+from {pyname} import cli, Opt
+
+
 @cli
 def entry(some: Opt):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 Could be called from the command line as follows:
@@ -222,9 +264,16 @@ But it's possible to specify the default value for `Opt`:
 ```py
 # test.py
 
+from {pyname} import cli, Opt
+
+
 @cli
 def entry(some: Opt = 1):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 So it's now possible to call the script as follows:
@@ -241,9 +290,16 @@ For example, for the following function:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(some: Arg):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 It's possible to invoke the help page using the flag `--help`:
@@ -267,11 +323,17 @@ Consider the following example as a demonstration of both possibilities:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(some: Arg('some argument')):
     """A simple demonstration program."""
-
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 This produces a following help page:
@@ -305,9 +367,16 @@ To define a shortcut letter for a flag or an option, the `short` parameter of ei
 ```py
 # test.py
 
+from {pyname} import cli, Flag
+
+
 @cli
 def entry(some: Flag(short='s')):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 This allows invoking the CLI with the following syntax:
@@ -325,9 +394,16 @@ Consider the following example:
 ```py
 # test.py
 
+from {pyname} import cli, Flag
+
+
 @cli
 def entry(some: Flag(prefix='+')):
     print(some)
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 Then the command line interface could be invoked as follows:
@@ -344,9 +420,16 @@ Consider the following example:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(some: Arg):
     print(type(some))
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 If an integer value is passed to the command line, the following output is produced:
@@ -359,9 +442,16 @@ To enforce the value to be an `int`, the following syntax should be used:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
 @cli
 def entry(some: Arg[int]):
     print(type(some))
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 This makes `some` to be an integer:
@@ -375,6 +465,13 @@ This could be done by defining a parser for one:
 ```py
 # test.py
 
+from {pyname} import cli, Arg
+
+
+class Custom:
+    ...
+
+
 @cli
 def entry(some: Arg[Custom]):
     ...
@@ -383,6 +480,10 @@ def entry(some: Arg[Custom]):
 @cli.parse
 def custom(x: str) -> Custom:
     ...
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 ### Commands
@@ -393,6 +494,9 @@ These subcommands act as separate CLIs and, thus, are separate functions in {Nam
 Consider the following example as a fake `git` CLI:
 ```py
 # git.py
+
+from {pyname} import cli
+
 
 @cli
 def entry():
@@ -409,6 +513,10 @@ def pull():
 @entry.command
 def push():
     print('pushing')
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 This CLI could be invoked as follows:
@@ -428,6 +536,9 @@ To mimic that in {Name}, the following structure should be used:
 ```py
 # dotnet.py
 
+from {pyname} import cli
+
+
 @cli
 def entry():
     ...
@@ -441,6 +552,10 @@ def tool():
 @tool.command
 def install():
     ...
+
+
+if __name__ == '__main__':
+    cli()
 ```
 
 ## Learn more
