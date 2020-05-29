@@ -461,7 +461,7 @@ $ python test.py 1
 ```
 
 But sometimes, a custom type should be parsed from a command line.
-This could be done by defining a parser for one:
+This could be done by defining a parser for one using the `parse` decorator:
 ```py
 # test.py
 
@@ -481,6 +481,32 @@ def entry(some: Arg[Custom]):
 def custom(x: str) -> Custom:
     ...
 
+
+if __name__ == '__main__':
+    cli()
+```
+
+Note: it's possible to manually add a parser for a type using the `add_parser` function.
+It works in same way as the `parse` decorator:
+```py
+# test.py
+
+from {pyname} import cli, Arg
+
+
+class Custom:
+    def parse(x: str) -> 'Custom':
+        ...
+
+    ...
+
+
+@cli
+def entry(some: Arg[Custom]):
+    ...
+
+
+cli.add_parser(Custom.parse)
 
 if __name__ == '__main__':
     cli()
