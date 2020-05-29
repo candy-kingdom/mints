@@ -6,8 +6,7 @@ _Clean and elegant CLI development kit._
 
 ## Overview
 
-{Name} is a microframework that allows you to build CLI apps in declarative and natural way.
-It's a lightweight alternative to Click, Plac or Fire with the annotations based API.
+{Name} is a microframework that allows building declarative and nice-looking CLI apps.
 
 Consider the following example as a demonstration of {Name} capabilities:
 ```py
