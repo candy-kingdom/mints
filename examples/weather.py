@@ -105,8 +105,8 @@ def weather(city:     Arg('A city to request weather or a forecast for.'),
         print('\n\n'.join(result))
     else:
         if lines is not None:
-            exit('The `lines` option was specified, '
-                 'but `forecast` was not.')
+            exit('The `--lines` option was specified, '
+                 'but `--forecast` was not.')
 
         result = api.weather(city, country)
 
