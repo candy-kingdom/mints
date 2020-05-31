@@ -36,7 +36,7 @@ class Roll:
 def roll(rolls: Arg[List[Roll]]('A list of dice rolls.')):
     """Roll dice.
 
-    Each die should be specified using the dice notation ('[m]d{n}'),
+    Each die should be specified using the dice notation: [m]d{n},
     where `m` stands for the number of times to roll a die (optional),
     and `n` stands for the number of sides of a die.
     For example,
@@ -62,7 +62,7 @@ def roll(rolls: Arg[List[Roll]]('A list of dice rolls.')):
 
 @cli.parse
 def roll(x: str) -> Roll:
-    """Parses a single die roll from the dice notation ('[m]d{n}')."""
+    """Parses a single die roll from the dice notation."""
 
     pattern = re.compile(r'(?P<times>\d*)d(?P<sides>\d+)')
 
