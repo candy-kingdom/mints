@@ -48,12 +48,10 @@ class API:
     def request(self, endpoint: str, **params: Any) -> Any:
         """Performs a request to the OpenWeather API."""
 
-        url = self.url
-        url = urljoin(url, endpoint)
-        url = urljoin(url, f'?appid={self.key}')
+        url = urljoin(self.url, endpoint)
 
         try:
-            response = requests.get(url, params=params)
+            response = requests.get(url, params={'appid': self.key, **params})
             response.raise_for_status()
         except requests.HTTPError as error:
             exit(f'{error.response.status_code} HTTP error '
