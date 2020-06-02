@@ -282,7 +282,7 @@ $ python test.py
 1
 ```
 
-#### Help page
+### Help page
 
 Each CLI in {Name} has a built-in help page, which is automatically generated.
 
@@ -350,7 +350,7 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
-#### Short name
+### Short name
 
 Usually, both flags and options come with a shortcut syntax.
 For example, instead of writing:
@@ -385,7 +385,7 @@ $ python test.py -s
 True
 ```
 
-#### Prefix
+### Prefix
 
 Flags and options are usually called with the `-` prefix (in short and long variations).
 To override this behaviour, the `prefix` parameter of either `Flag` or `Opt` annotations should be used.
@@ -412,7 +412,7 @@ $ python test.py ++some
 True
 ```
 
-#### Types
+### Types
 
 By default, the value that comes from the CLI, if it's an `Opt` or an `Arg`, is of `str` type.
 
