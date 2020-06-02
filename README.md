@@ -8,7 +8,7 @@ _Clean and elegant CLI development kit._
 
 {Name} is a microframework that allows building declarative and nice-looking CLI apps.
 
-Consider the following example as a demonstration of {Name} capabilities:
+Consider the following simple program as a demonstration of {Name} capabilities:
 ```py
 # say.py
 
