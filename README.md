@@ -116,7 +116,7 @@ if __name__ == '__main__':
 It allows the following call in shell:
 ```
 $ python test.py 1 2
-(1, 2)
+1 2
 ```
 
 But not:
@@ -133,7 +133,7 @@ from {pyname} import cli, Arg
 
 @cli
 def entry(x: Arg, y: Arg = 2):
-    print(some)
+    print(x, y)
 
 
 if __name__ == '__main__':
@@ -143,7 +143,7 @@ if __name__ == '__main__':
 To support the following:
 ```
 $ python test.py 1
-(1, 2)
+1 2
 ```
 
 Note: it's not possible to define something like this:
@@ -155,7 +155,7 @@ from {pyname} import cli, Arg
 
 @cli
 def entry(x: Arg = 1, y: Arg):
-    print(some)
+    print(x, y)
 
 
 if __name__ == '__main__':
