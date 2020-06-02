@@ -59,7 +59,7 @@ $ pip install {pipname}
 
 ## Getting started
 
-_Note: the examples are [PEP 8](https://www.python.org/dev/peps/pep-0008/#blank-lines) compatible: one blank line is used instead of two to separate top-level definitions._
+_Note: the examples are not [PEP 8](https://www.python.org/dev/peps/pep-0008/#blank-lines) compatible: one blank line is used instead of two to separate top-level definitions._
 
 In general, writing a CLI app is very similar to writing a regular function.
 {Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
