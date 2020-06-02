@@ -23,7 +23,6 @@ def say(phrase: Arg('a phrase to print'),
     for i in range(0, times):
         print(phrase.upper() if caps else phrase)
 
-
 if __name__ == '__main__':
     cli()
 ```
@@ -60,6 +59,8 @@ $ pip install {pipname}
 
 ## Getting started
 
+_Note: the examples are [PEP 8](https://www.python.org/dev/peps/pep-0008/#blank-lines) compatible: one blank line is used instead of two to separate top-level definitions._
+
 In general, writing a CLI app is very similar to writing a regular function.
 {Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
 Consider the following example:
@@ -71,7 +72,6 @@ from {pyname} import cli, Arg
 @cli
 def entry(phrase: Arg):
     print(phrase)
-
 
 if __name__ == '__main__':
     cli()
@@ -103,11 +103,9 @@ Consider this function:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(x: Arg, y: Arg):
     print(x, y)
-
 
 if __name__ == '__main__':
     cli()
@@ -130,11 +128,9 @@ It's possible though to add a default value for an argument:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(x: Arg, y: Arg = 2):
     print(x, y)
-
 
 if __name__ == '__main__':
     cli()
@@ -152,11 +148,9 @@ Note: it's not possible to define something like this:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(x: Arg = 1, y: Arg):
     print(x, y)
-
 
 if __name__ == '__main__':
     cli()
@@ -176,11 +170,9 @@ For example, the following function signature:
 
 from {pyname} import cli, Flag
 
-
 @cli
 def entry(some: Flag):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -208,11 +200,9 @@ For example, one could define:
 
 from {pyname} import cli, Flag
 
-
 @cli
 def entry(some: Flag = True):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -237,11 +227,9 @@ For example, the following function signature:
 
 from {pyname} import cli, Opt
 
-
 @cli
 def entry(some: Opt):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -266,11 +254,9 @@ But it's possible to specify the default value for `Opt`:
 
 from {pyname} import cli, Opt
 
-
 @cli
 def entry(some: Opt = 1):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -292,11 +278,9 @@ For example, for the following function:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(some: Arg):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -325,12 +309,10 @@ Consider the following example as a demonstration of both possibilities:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(some: Arg('some argument')):
     """A simple demonstration program."""
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -369,11 +351,9 @@ To define a shortcut letter for a flag or an option, the `short` parameter of ei
 
 from {pyname} import cli, Flag
 
-
 @cli
 def entry(some: Flag(short='s')):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -396,11 +376,9 @@ Consider the following example:
 
 from {pyname} import cli, Flag
 
-
 @cli
 def entry(some: Flag(prefix='+')):
     print(some)
-
 
 if __name__ == '__main__':
     cli()
@@ -422,11 +400,9 @@ Consider the following example:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(some: Arg):
     print(type(some))
-
 
 if __name__ == '__main__':
     cli()
@@ -444,11 +420,9 @@ To enforce the value to be an `int`, the following syntax should be used:
 
 from {pyname} import cli, Arg
 
-
 @cli
 def entry(some: Arg[int]):
     print(type(some))
-
 
 if __name__ == '__main__':
     cli()
@@ -467,20 +441,16 @@ This could be done by defining a parser for one using the `parse` decorator:
 
 from {pyname} import cli, Arg
 
-
 class Custom:
     ...
-
 
 @cli
 def entry(some: Arg[Custom]):
     ...
 
-
 @cli.parse
 def custom(x: str) -> Custom:
     ...
-
 
 if __name__ == '__main__':
     cli()
@@ -493,18 +463,13 @@ It works in same way as the `parse` decorator:
 
 from {pyname} import cli, Arg
 
-
 class Custom:
     def parse(x: str) -> 'Custom':
         ...
 
-    ...
-
-
 @cli
 def entry(some: Arg[Custom]):
     ...
-
 
 cli.add_parser(Custom.parse)
 
@@ -523,7 +488,6 @@ Consider the following example as a fake `git` CLI:
 
 from {pyname} import cli
 
-
 @cli
 def entry():
     ...
@@ -535,11 +499,9 @@ def pull():
     else:
         print('pulling')
 
-
 @entry.command
 def push():
     print('pushing')
-
 
 if __name__ == '__main__':
     cli()
@@ -564,21 +526,17 @@ This could be implemented in {Name} in a natural way:
 
 from {pyname} import cli
 
-
 @cli
 def entry():
     ...
-
 
 @entry.command
 def tool():
     ...
 
-
 @tool.command
 def install():
     ...
-
 
 if __name__ == '__main__':
     cli()
