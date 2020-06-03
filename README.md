@@ -77,7 +77,7 @@ if __name__ == '__main__':
     cli()
 ```
 
-The script can be executed as a command line app:
+The script can be executed as a command-line app:
 ```
 $ python3 print.py "Hello, world!"
 Hello, world!
@@ -86,16 +86,16 @@ Hello, world!
 The main idea is very simple: you use the `cli` decorator to wrap a function that acts as an entry point of the application (`entry`), and then use the `cli()` to make things running.
 `Arg` is used to annotate positional arguments of the CLI.
 
-In the following section we'll discuss more deeply how to implement different types of parameters in {Name}.
+In the following section, we'll discuss more deeply how to implement different types of parameters in {Name}.
 
 ### Parameters
 
-There are three different type annotations that could be used to represent positional arguments, flags and options.
+There are three different type annotations that could be used to represent positional arguments, flags, and options.
 
 #### `Arg`
 
 `Arg` is a type annotation for positional arguments.
-In CLI, positional arguments work in same way as in programming languages.
+In CLI, positional arguments work in the same way as in programming languages.
 
 Consider this function:
 ```py
@@ -161,8 +161,8 @@ The function signature is not supported even in Python.
 #### `Flag`
 
 `Flag` is a type annotation for flags.
-In CLI, flags are boolean arguments that represent a turned off or turned on behaviour.
-Unlike positional ones, they could be specified in a command line only with special syntax.
+In CLI, flags are boolean arguments that represent a turned off or turned on behavior.
+Unlike positional ones, they could be specified in a command line only with a special syntax.
 
 For example, the following function signature:
 ```py
@@ -191,8 +191,8 @@ False
 ```
 
 Flags also support default values, but that doesn't make much sense.
-Default value of `False` is already set implicitly for each flag.
-Default value of `True` makes a flag to be always true.
+The default value of `False` is already set implicitly for each flag.
+The default value of `True` makes a flag to be always true.
 
 For example, one could define:
 ```py
@@ -318,7 +318,7 @@ if __name__ == '__main__':
     cli()
 ```
 
-This produces a following help page:
+This produces the following help page:
 ```
 $ python test.py --help
 usage: entry [-h] some 
@@ -368,7 +368,7 @@ True
 ### Prefix
 
 Flags and options are usually called with the `-` prefix (in short and long variations).
-To override this behaviour, the `prefix` parameter of either `Flag` or `Opt` annotations should be used.
+To override this behavior, the `prefix` parameter of either `Flag` or `Opt` annotations should be used.
 
 Consider the following example:
 ```py
@@ -457,7 +457,7 @@ if __name__ == '__main__':
 ```
 
 Note: it's possible to manually add a parser for a type using the `add_parser` function.
-It works in same way as the `parse` decorator:
+It works in the same way as the `parse` decorator:
 ```py
 # test.py
 
