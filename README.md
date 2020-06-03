@@ -111,18 +111,18 @@ if __name__ == '__main__':
     cli()
 ```
 
-It allows the following call in shell:
+It can be called from a shell as follows:
 ```
 $ python test.py 1 2
 1 2
 ```
 
-But not:
+But this call is invalid:
 ```
 $ python test.py 1
 ```
 
-It's possible though to add a default value for an argument:
+It's possible though to provide a default value to the argument:
 ```py
 # test.py
 
