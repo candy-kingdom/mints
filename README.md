@@ -94,7 +94,7 @@ There are three different annotations that represent positional arguments, flags
 
 #### `Arg`
 
-`Arg` is a type annotation for positional arguments.
+`Arg` is an annotation for positional arguments.
 In CLI, positional arguments work in the same way as in programming languages.
 
 Consider this function:
@@ -160,7 +160,7 @@ The function signature is not supported even in Python.
 
 #### `Flag`
 
-`Flag` is a type annotation for flags.
+`Flag` is an annotation for flags.
 In CLI, flags are boolean arguments that represent a turned off or turned on behavior.
 Unlike positional ones, they could be specified in a command line only with a special syntax.
 
@@ -218,7 +218,7 @@ True
 
 #### `Opt`
 
-`Flag` is a type annotation for options.
+`Flag` is an annotation for options.
 In CLI, options are simply named arguments or flags with values.
 
 For example, the following function signature:
