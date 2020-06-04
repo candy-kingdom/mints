@@ -90,7 +90,7 @@ In the following section, we'll discuss more deeply how to implement different t
 
 ### Parameters
 
-There are three different type annotations that could be used to represent positional arguments, flags, and options.
+There are three different annotations that represent positional arguments, flags, and options.
 
 #### `Arg`
 
