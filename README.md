@@ -117,12 +117,14 @@ $ python test.py 1 2
 1 2
 ```
 
-But this call is invalid:
+Note: it's not possible to execute the script without an argument.
 ```
 $ python test.py 1
+usage: entry [-h] x y
+entry: error: the following arguments are required: y
 ```
 
-It's possible though to provide a default value to the argument:
+To solve that, you can provide a default value to the argument:
 ```py
 # test.py
 
@@ -135,36 +137,18 @@ def entry(x: Arg, y: Arg = 2):
 if __name__ == '__main__':
     cli()
 ```
-
-To support the following:
 ```
 $ python test.py 1
 1 2
 ```
 
-Note: it's not possible to define something like this:
-```py
-# test.py
-
-from {pyname} import cli, Arg
-
-@cli
-def entry(x: Arg = 1, y: Arg):
-    print(x, y)
-
-if __name__ == '__main__':
-    cli()
-```
-
-The function signature is not supported even in Python.
-
 #### `Flag`
 
 `Flag` is an annotation for flags.
-In CLI, flags are boolean arguments that represent a turned off or turned on behavior.
-Unlike positional ones, they could be specified in a command line only with a special syntax.
+In CLI, flags are boolean arguments that represent an on/off behavior.
+Unlike positional ones, they should be specified in a command line only with a special syntax.
 
-For example, the following function signature:
+Consider the following example of a flag:
 ```py
 # test.py
 
@@ -177,51 +161,21 @@ def entry(some: Flag):
 if __name__ == '__main__':
     cli()
 ```
-
-Could be called from the command line as follows:
 ```
 $ python test.py --some
 True
 ```
-
-But it's also possible to invoke the CLI without the flag:
 ```
 $ python test.py
 False
 ```
 
-Flags also support default values, but that doesn't make much sense.
-The default value of `False` is already set implicitly for each flag.
-The default value of `True` makes a flag to be always true.
-
-For example, one could define:
-```py
-# test.py
-
-from {pyname} import cli, Flag
-
-@cli
-def entry(some: Flag = True):
-    print(some)
-
-if __name__ == '__main__':
-    cli()
-```
-
-But this makes the flag `some` useless:
-```
-$ python test.py --some
-True
-$ python test.py
-True
-```
-
 #### `Opt`
 
-`Flag` is an annotation for options.
-In CLI, options are simply named arguments or flags with values.
+`Opt` is an annotation for options.
+Options are simply flags with values (or arguments with names).
 
-For example, the following function signature:
+Here is an example of an option:
 ```py
 # test.py
 
@@ -234,21 +188,19 @@ def entry(some: Opt):
 if __name__ == '__main__':
     cli()
 ```
-
-Could be called from the command line as follows:
 ```
 $ python test.py --some 1
 1
 ```
 
-Note: unlike with flags, it's not possible to _not_ specify the option by default.
+Note: it's not possible to _not_ specify the option by default, as it was for flags.
 ```
 $ python test.py --some
 usage: entry [-h] --some SOME
 entry: error: the following arguments are required: --some
 ```
 
-But it's possible to specify the default value for `Opt`:
+You still could provide a default value:
 ```py
 # test.py
 
@@ -261,8 +213,6 @@ def entry(some: Opt = 1):
 if __name__ == '__main__':
     cli()
 ```
-
-So it's now possible to call the script as follows:
 ```
 $ python test.py
 1
@@ -272,7 +222,7 @@ $ python test.py
 
 Each CLI in {Name} has a built-in help page, which is automatically generated.
 
-For example, for the following function:
+Consider the following example:
 ```py
 # test.py
 
@@ -285,8 +235,6 @@ def entry(some: Arg):
 if __name__ == '__main__':
     cli()
 ```
-
-It's possible to invoke the help page using the flag `--help`:
 ```
 $ python test.py --help
 usage: entry [-h] some 
@@ -300,10 +248,8 @@ optional arguments:
 
 Note the lack of the overall program description as well as the description of the `some` argument.
 
-To override the program description, one could write a simple doc-comment for the CLI function:
-To assign a description to an argument, the `description` parameter of the argument constructor type should be used.
-
-Consider the following example as a demonstration of both possibilities:
+To override the description of the program, one could write a simple doc-comment for a CLI function.
+To assign a description to an argument, the `description` parameter of the argument constructor type should be used (it's always first).
 ```py
 # test.py
 
@@ -317,8 +263,6 @@ def entry(some: Arg('some argument')):
 if __name__ == '__main__':
     cli()
 ```
-
-This produces the following help page:
 ```
 $ python test.py --help
 usage: entry [-h] some 
@@ -345,7 +289,7 @@ One could write:
 $ python test.py -s 1
 ```
 
-To define a shortcut letter for a flag or an option, the `short` parameter of either `Flag` or `Opt` annotations should be used:
+To define a shortcut letter for a flag or an option, the `short` parameter of either `Flag` or `Opt` annotation should be used:
 ```py
 # test.py
 
@@ -358,8 +302,6 @@ def entry(some: Flag(short='s')):
 if __name__ == '__main__':
     cli()
 ```
-
-This allows invoking the CLI with the following syntax:
 ```
 $ python test.py -s
 True
@@ -368,7 +310,7 @@ True
 ### Prefix
 
 Flags and options are usually called with the `-` prefix (in short and long variations).
-To override this behavior, the `prefix` parameter of either `Flag` or `Opt` annotations should be used.
+To override this behavior, the `prefix` parameter of either `Flag` or `Opt` annotation should be used.
 
 Consider the following example:
 ```py
@@ -383,8 +325,6 @@ def entry(some: Flag(prefix='+')):
 if __name__ == '__main__':
     cli()
 ```
-
-Then the command line interface could be invoked as follows:
 ```
 $ python test.py ++some
 True
@@ -392,7 +332,7 @@ True
 
 ### Types
 
-By default, the value that comes from the CLI, if it's an `Opt` or an `Arg`, is of `str` type.
+By default, the argument that is passed from the CLI, if it's handled by an `Opt` or an `Arg`, is of `str` type (or of `bool` for `Flag`s).
 
 Consider the following example:
 ```py
@@ -407,14 +347,16 @@ def entry(some: Arg):
 if __name__ == '__main__':
     cli()
 ```
-
-If an integer value is passed to the command line, the following output is produced:
 ```
 $ python test.py 1
 <class 'str'>
 ```
 
-To enforce the value to be an `int`, the following syntax should be used:
+To convert the argument into some type, you can use square brackets syntax on annotations.
+
+#### Default types
+
+Currently, you parse any type that is supported by [`argparse`](https://docs.python.org/3/library/argparse.html#type) with the following syntax:
 ```py
 # test.py
 
@@ -427,37 +369,38 @@ def entry(some: Arg[int]):
 if __name__ == '__main__':
     cli()
 ```
-
-This makes `some` to be an integer:
 ```
 $ python test.py 1
 <class 'int'>
 ```
 
-But sometimes, a custom type should be parsed from a command line.
-This could be done by defining a parser for one using the `parse` decorator:
+#### User-defined types
+
+When a user-defined type should be parsed, the parser for this type should be registered within the CLI app.
+You could use a `parse` decorator just for that:
 ```py
 # test.py
 
 from {pyname} import cli, Arg
 
+# User-defined type.
 class Custom:
     ...
 
-@cli
-def entry(some: Arg[Custom]):
-    ...
-
+# A parser for user-defined type.
 @cli.parse
 def custom(x: str) -> Custom:
+    ...
+      
+@cli
+def entry(some: Arg[Custom]):
     ...
 
 if __name__ == '__main__':
     cli()
 ```
 
-Note: it's possible to manually add a parser for a type using the `add_parser` function.
-It works in the same way as the `parse` decorator:
+Note that you could also use the `add_parser` function to manually add the parser function by its name:
 ```py
 # test.py
 
@@ -477,19 +420,61 @@ if __name__ == '__main__':
     cli()
 ```
 
+### Variable arguments
+
+Variable arguments are also supported through the `List` type:
+```py
+# test.py
+
+from typing import List
+
+from {pyname} import cli, Arg
+
+@cli
+def entry(some: Arg[List[int]]):
+    print(type(some))
+
+if __name__ == '__main__':
+    cli()
+```
+```
+$ python test.py 1 2 3
+[1, 2, 3]
+```
+
+Note that lists are non-greedy:
+```py
+# test.py
+
+from {pyname} import cli, Arg
+
+@cli
+def entry(x: Arg[int], y: Arg[List[int]], z: Arg[int]):
+    print(x, y, z)
+
+if __name__ == '__main__':
+    cli()
+```
+```
+$ python test.py 1 2 3 4
+1 [2, 3] 4
+```
+
+Consider checking the [rolling dices](https://github.com/candy-kingdom/cli/blob/develop/examples/roll.py) example with a more realistic use case.
+
 ### Commands
 
 Complex command line interfaces like `git` have several subcommands: `git status`, `git pull`, `git push`, etc.
 These subcommands act as separate CLIs and, thus, are separate functions in {Name}.
 
-Consider the following example as a fake `git` CLI:
+Consider the following example as a mock of `git` CLI:
 ```py
 # git.py
 
 from {pyname} import cli
 
 @cli
-def entry():
+def git():
     ...
 
 @entry.command
@@ -506,8 +491,6 @@ def push():
 if __name__ == '__main__':
     cli()
 ```
-
-This CLI could be invoked as follows:
 ```
 $ python git.py pull
 pulling
@@ -517,8 +500,8 @@ $ python git.py push
 pushing
 ```
 
-Note: it's possible to have deeper hierarchies of subcommands.
-For example, the `dotnet` CLI tool allows [`dotnet tool install {x}`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install) syntax.
+Sometimes it's needed to have a deeper hierarchy of subcommands.
+For example, the `dotnet` CLI tool allows calling [`dotnet tool install ...`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install).
 
 This could be implemented in {Name} in a natural way:
 ```py
@@ -527,7 +510,7 @@ This could be implemented in {Name} in a natural way:
 from {pyname} import cli
 
 @cli
-def entry():
+def dotnet():
     ...
 
 @entry.command
