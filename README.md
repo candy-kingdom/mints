@@ -65,12 +65,12 @@ In general, writing a CLI app is very similar to writing a regular function.
 {Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
 Consider the following example:
 ```py
-# print.py
+# say.py
 
 from {pyname} import cli, Arg
 
 @cli
-def entry(phrase: Arg):
+def say(phrase: Arg):
     print(phrase)
 
 if __name__ == '__main__':
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
 The script can be executed as a command-line app:
 ```
-$ python3 print.py "Hello, world!"
+$ python3 say.py "Hello, world!"
 Hello, world!
 ```
 
@@ -104,7 +104,7 @@ Consider this function:
 from {pyname} import cli, Arg
 
 @cli
-def entry(x: Arg, y: Arg):
+def test(x: Arg, y: Arg):
     print(x, y)
 
 if __name__ == '__main__':
@@ -120,8 +120,8 @@ $ python test.py 1 2
 Note: it's not possible to execute the script without an argument.
 ```
 $ python test.py 1
-usage: entry [-h] x y
-entry: error: the following arguments are required: y
+usage: test [-h] x y
+test: error: the following arguments are required: y
 ```
 
 To solve that, you can provide a default value to the argument:
@@ -131,7 +131,7 @@ To solve that, you can provide a default value to the argument:
 from {pyname} import cli, Arg
 
 @cli
-def entry(x: Arg, y: Arg = 2):
+def test(x: Arg, y: Arg = 2):
     print(x, y)
 
 if __name__ == '__main__':
@@ -155,7 +155,7 @@ Consider the following example of a flag:
 from {pyname} import cli, Flag
 
 @cli
-def entry(some: Flag):
+def test(some: Flag):
     print(some)
 
 if __name__ == '__main__':
@@ -182,7 +182,7 @@ Here is an example of an option:
 from {pyname} import cli, Opt
 
 @cli
-def entry(some: Opt):
+def test(some: Opt):
     print(some)
 
 if __name__ == '__main__':
@@ -196,8 +196,8 @@ $ python test.py --some 1
 Note: it's not possible to _not_ specify the option by default, as it was for flags.
 ```
 $ python test.py --some
-usage: entry [-h] --some SOME
-entry: error: the following arguments are required: --some
+usage: test [-h] --some SOME
+test: error: the following arguments are required: --some
 ```
 
 You still could provide a default value:
@@ -207,7 +207,7 @@ You still could provide a default value:
 from {pyname} import cli, Opt
 
 @cli
-def entry(some: Opt = 1):
+def test(some: Opt = 1):
     print(some)
 
 if __name__ == '__main__':
@@ -229,7 +229,7 @@ Consider the following example:
 from {pyname} import cli, Arg
 
 @cli
-def entry(some: Arg):
+def test(some: Arg):
     print(some)
 
 if __name__ == '__main__':
@@ -237,7 +237,7 @@ if __name__ == '__main__':
 ```
 ```
 $ python test.py --help
-usage: entry [-h] some 
+usage: test [-h] some 
 
 positional arguments:
   some
@@ -246,17 +246,18 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
-Note the lack of the overall program description as well as the description of the `some` argument.
+Note the lack of the program description as well as the `some` argument description.
 
-To override the description of the program, one could write a simple doc-comment for a CLI function.
-To assign a description to an argument, the `description` parameter of the argument constructor type should be used (it's always first).
+To override the description of the program, put a simple doc-comment to a CLI function.
+To assign a description to an argument, instantiate an annotation type passing the `description` (it's always comes first).
+
 ```py
 # test.py
 
 from {pyname} import cli, Arg
 
 @cli
-def entry(some: Arg('some argument')):
+def test(some: Arg('some argument')):
     """A simple demonstration program."""
     print(some)
 
@@ -265,7 +266,7 @@ if __name__ == '__main__':
 ```
 ```
 $ python test.py --help
-usage: entry [-h] some 
+usage: test [-h] some 
 
 A simple demonstration program.
 
@@ -296,7 +297,7 @@ To define a shortcut letter for a flag or an option, the `short` parameter of ei
 from {pyname} import cli, Flag
 
 @cli
-def entry(some: Flag(short='s')):
+def test(some: Flag(short='s')):
     print(some)
 
 if __name__ == '__main__':
@@ -319,7 +320,7 @@ Consider the following example:
 from {pyname} import cli, Flag
 
 @cli
-def entry(some: Flag(prefix='+')):
+def test(some: Flag(prefix='+')):
     print(some)
 
 if __name__ == '__main__':
@@ -341,7 +342,7 @@ Consider the following example:
 from {pyname} import cli, Arg
 
 @cli
-def entry(some: Arg):
+def test(some: Arg):
     print(type(some))
 
 if __name__ == '__main__':
@@ -363,7 +364,7 @@ Currently, you parse any type that is supported by [`argparse`](https://docs.pyt
 from {pyname} import cli, Arg
 
 @cli
-def entry(some: Arg[int]):
+def test(some: Arg[int]):
     print(type(some))
 
 if __name__ == '__main__':
@@ -385,39 +386,51 @@ from {pyname} import cli, Arg
 
 # User-defined type.
 class Custom:
-    ...
+    def __init__(self, x):
+        self.property = x
 
 # A parser for user-defined type.
 @cli.parse
 def custom(x: str) -> Custom:
-    ...
+    return Custom(x)
       
 @cli
-def entry(some: Arg[Custom]):
-    ...
+def test(some: Arg[Custom]):
+    print(some.property)
 
 if __name__ == '__main__':
     cli()
 ```
+```
+$ python test.py 1
+1
+```
 
-Note that you could also use the `add_parser` function to manually add the parser function by its name:
+Note that you could also use the `add_parser` function to manually add the parser by its name:
 ```py
 # test.py
 
 from {pyname} import cli, Arg
 
 class Custom:
+    @staticmethod
     def parse(x: str) -> 'Custom':
-        ...
+        return Custom(x)
+        
+    def __init__(self, x):
+        self.property = x
 
 @cli
-def entry(some: Arg[Custom]):
-    ...
-
-cli.add_parser(Custom.parse)
+def test(some: Arg[Custom]):
+    print(some.property)
 
 if __name__ == '__main__':
+    cli.add_parser(Custom.parse)
     cli()
+```
+```
+$ python test.py 1
+1
 ```
 
 ### Variable arguments
