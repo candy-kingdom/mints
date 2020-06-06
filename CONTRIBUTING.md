@@ -1,7 +1,7 @@
 # Contributing to {Name}
 
 Thanks for considering to contribute.
-We're open for any kind of contribution and help.
+We're open for any improvements.
 
 ## Creating an issue
 Use one of our issue templates to either submit a bug or request a feature.
