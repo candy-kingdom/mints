@@ -318,8 +318,6 @@ True
 
 Flags and options are usually called with the `-` prefix (in short and long variations).
 To override this behavior, the `prefix` parameter of either `Flag` or `Opt` annotation should be used.
-
-Consider the following example:
 ```py
 # test.py
 
