@@ -97,8 +97,6 @@ In the following section, we'll discuss more deeply how to implement different t
 
 ### Parameters
 
-There are three different annotations that represent positional arguments, flags, and options.
-
 #### `Arg`
 
 `Arg` is an annotation for positional arguments.
