@@ -548,7 +548,7 @@ if __name__ == '__main__':
 
 ## Learn more
 
-Learn more by looking at real-life [examples](https://github.com/candy-kingdom/cli/blob/master/examples/).
+Learn more by looking at our carefully prepared [examples](https://github.com/candy-kingdom/cli/blob/master/examples/).
 
 ## License
 
