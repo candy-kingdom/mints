@@ -357,7 +357,7 @@ $ python test.py 1
 <class 'str'>
 ```
 
-To convert the argument into some type, you can use square brackets syntax on annotations.
+To convert the argument into some type, you can use the square brackets syntax on annotations.
 
 #### Default types
 
