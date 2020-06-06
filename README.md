@@ -515,8 +515,12 @@ if __name__ == '__main__':
 ```
 $ python git.py pull
 pulling
+```
+```
 $ python git.py pull --rebase
 pulling with rebase
+```
+```
 $ python git.py push
 pushing
 ```
