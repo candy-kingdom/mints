@@ -100,9 +100,10 @@ In the following section, we'll discuss more deeply how to implement different t
 #### `Arg`
 
 `Arg` is an annotation for positional arguments.
-In CLI, positional arguments work in the same way as in programming languages.
 
-Consider this function:
+Positional arguments work in the same way as in programming languages.
+
+Consider the following function:
 ```py
 # test.py
 
@@ -115,8 +116,6 @@ def test(x: Arg, y: Arg):
 if __name__ == '__main__':
     cli()
 ```
-
-It can be called from a shell as follows:
 ```
 $ python test.py 1 2
 1 2
@@ -129,7 +128,7 @@ usage: test [-h] x y
 test: error: the following arguments are required: y
 ```
 
-To solve that, you can provide a default value to the argument:
+To address this issue, you could provide a default value to the argument:
 ```py
 # test.py
 
@@ -150,8 +149,9 @@ $ python test.py 1
 #### `Flag`
 
 `Flag` is an annotation for flags.
-In CLI, flags are boolean arguments that represent an on/off behavior.
-Unlike positional ones, they should be specified in a command line only with a special syntax.
+
+Flags are boolean arguments that represent an on/off behavior.
+Unlike positional arguments, they should be specified in the command line only with a special syntax.
 
 Consider the following example of a flag:
 ```py
@@ -178,6 +178,7 @@ False
 #### `Opt`
 
 `Opt` is an annotation for options.
+
 Options are simply flags with values (or arguments with names).
 
 Here is an example of an option:
