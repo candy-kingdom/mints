@@ -7,8 +7,7 @@ _Clean and elegant CLI development kit._
 ## Overview
 
 {Name} is a microframework that allows building declarative and nice-looking CLI apps.
-
-Unlike in [Click](https://click.palletsprojects.com/en/7.x/) or [Plac](https://micheles.github.io/plac/), the API is based on the [function annotations](https://www.python.org/dev/peps/pep-3107/) feature.
+Unlike [Click](https://click.palletsprojects.com/en/7.x/) or [Plac](https://micheles.github.io/plac/), it utilizes the [function annotations](https://www.python.org/dev/peps/pep-3107/) more than [decorators](https://www.python.org/dev/peps/pep-0318/).
 
 Here is a quick example:
 ```py
