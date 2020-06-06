@@ -337,7 +337,7 @@ True
 
 ### Types
 
-By default, the argument that is passed from the CLI, if it's handled by an `Opt` or an `Arg`, is of `str` type (or of `bool` for `Flag`s).
+By default, the argument that is passed from the CLI, if it's handled by an `Opt` or an `Arg`, is of `str` type (or of `bool` for `Flag`).
 
 Consider the following example:
 ```py
