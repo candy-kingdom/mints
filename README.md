@@ -528,7 +528,7 @@ pushing
 Sometimes it's needed to have a deeper hierarchy of subcommands.
 For example, the `dotnet` CLI tool allows calling [`dotnet tool install ...`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install).
 
-This could be implemented in {Name} in a natural way:
+In {Name}, this could be implemented in a natural way:
 ```py
 # dotnet.py
 
