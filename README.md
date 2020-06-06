@@ -361,7 +361,7 @@ To convert the argument into some type, you can use square brackets syntax on an
 
 #### Default types
 
-Currently, you parse any type that is supported by [`argparse`](https://docs.python.org/3/library/argparse.html#type) with the following syntax:
+You could parse any type that is supported by [`argparse`](https://docs.python.org/3/library/argparse.html#type) with the following syntax:
 ```py
 # test.py
 
