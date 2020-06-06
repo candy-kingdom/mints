@@ -2,7 +2,6 @@
 
 Thanks for considering to contribute.
 We're open for any kind of contribution and help.
-Feel free to send patches or opening issues.
 
 ## Creating an issue
 Use one of our issue templates to either submit a bug or request a feature.
