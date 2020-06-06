@@ -255,7 +255,7 @@ optional arguments:
 Note the lack of the program description as well as the `some` argument description.
 
 To override the description of the program, put a simple doc-comment to a CLI function.
-To assign a description to an argument, instantiate an annotation type passing the `description` (it's always comes first).
+To assign a description to an argument, instantiate an annotation with the `description` argument (it's always comes first).
 
 ```py
 # test.py
