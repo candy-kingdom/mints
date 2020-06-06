@@ -410,7 +410,7 @@ $ python test.py 1
 1
 ```
 
-Note that you could also use the `add_parser` function to manually add the parser by its name:
+Note that you could also use the `add_parser` function to manually add the parser:
 ```py
 # test.py
 
