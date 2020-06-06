@@ -8,7 +8,9 @@ _Clean and elegant CLI development kit._
 
 {Name} is a microframework that allows building declarative and nice-looking CLI apps.
 
-Consider the following simple program as a demonstration of {Name} capabilities:
+Unlike in [Click](https://click.palletsprojects.com/en/7.x/) or [Plac](https://micheles.github.io/plac/), the API is based on the [function annotations](https://www.python.org/dev/peps/pep-3107/) feature.
+
+Here is a quick example:
 ```py
 # say.py
 
@@ -27,16 +29,22 @@ if __name__ == '__main__':
     cli()
 ```
 
-It then can be used as follows:
+And what we get in the command line:
 ```
 $ python3 say.py "Hi!" 
 Hi!
+```
+```
 $ python3 say.py "Hi!" --caps
 HI!
+```
+```
 $ python3 say.py "Hi!" --times 3
 Hi!
 Hi!
 Hi!
+```
+```
 $ python3 say.py --help
 usage: say [-h] [--caps] [--times TIMES] phrase
 
