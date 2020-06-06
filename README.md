@@ -382,7 +382,7 @@ $ python test.py 1
 #### User-defined types
 
 When a user-defined type should be parsed, the parser for this type should be registered within the CLI app.
-You could use a `parse` decorator just for that:
+You could use the `parse` decorator just for that:
 ```py
 # test.py
 
