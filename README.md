@@ -556,4 +556,4 @@ The package is licensed under the [MIT](https://github.com/candy-kingdom/cli/blo
 
 ## Contributing
 
-...
+Before creating an issue or submitting a patch, check out our [contribution guildelines](https://github.com/candy-kingdom/cli/blob/master/CONTRIBUTING).
