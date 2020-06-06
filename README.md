@@ -482,7 +482,7 @@ Consider checking the [rolling dices](https://github.com/candy-kingdom/cli/blob/
 ### Commands
 
 Complex command line interfaces like `git` have several subcommands: `git status`, `git pull`, `git push`, etc.
-These subcommands act as separate CLIs and, thus, are separate functions in {Name}.
+These subcommands act as separate CLIs and, thus, should be defined as separate functions in {Name}.
 
 Consider the following example as a mock of `git` CLI:
 ```py
