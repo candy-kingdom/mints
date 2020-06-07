@@ -1,5 +1,4 @@
 # Contributing to {Name}
-
 Thanks for considering to contribute.
 We're open for any improvements.
 
@@ -11,10 +10,7 @@ To submit a _minor_ change (bugfix), just create a pull request with a clear and
 
 To submit a _major_ change (feature, refactoring), link it with an open issue; consider creating one if needed.
 
-Please, follow our conventions through the path.
-
 ## Conventions
-
 We appreciate clean and elegant code, and we love to follow some conventions in our journey.
 
 ### Coding
@@ -22,7 +18,6 @@ We appreciate clean and elegant code, and we love to follow some conventions in 
 - Use [Google Style](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) docstrings.
 - Avoid creating utils or helper modules, classes or functions.
 - Avoid using `get` in method names. For example, `get_item` should be `item`.
-
 
 Consider checking the [source code](https://github.com/candy-kingdom/cli/blob/develop/candies/cli/cli.py) for a more detailed picture. 
 
