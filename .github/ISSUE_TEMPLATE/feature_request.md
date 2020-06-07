@@ -21,7 +21,7 @@ An example of how you would like to use the feature in the code.
 ```
 
 An example of the command-line use case:
-```py
+```
 $ python test.py <args>
 <result>
 ```
