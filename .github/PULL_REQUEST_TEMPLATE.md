@@ -1,27 +1,22 @@
-<!--
-Thank you for your pull request. Please provide a description above and review
-the requirements below.
+## Links
+_Replace {N} with an issue number that is related to the change.
+Remove the section if this is a minor change._
 
-Bug fixes and new features should include tests and possibly benchmarks.
+Closes #{N}.
 
-Contributors guide: ./CONTRIBUTING.md
--->
+## Description
+A clear and concise description of the solved problem.
 
-<!-- _Please make sure to review and check all of these items:_ -->
+## Approach
+A clear and concise description of the approach that was used to solve the problem.
 
+If this is a _minor_ change, briefly describe how you fixed the problem or enhanced the code.
 
-##### Checklist
-<!-- Remove items that do not apply. For completed items, change [ ] to [x]. -->
+If this is a _major_ change, describe the most important parts of the solution, so the reviewer would know what to focus on.
 
-- [ ] `make -j4 test` (UNIX), or `vcbuild test` (Windows) passes
-- [ ] tests and/or benchmarks are included
-- [ ] documentation is changed or added
-- [ ] commit message follows [commit guidelines](./doc/guides/contributing/pull-requests.md#commit-message-guidelines)
+## Checklist
+_Remove items that are not related to your PR. Check other ones._
 
-<!-- _NOTE: these things are not required to open a PR and can be done afterwards / while the PR is open._ -->
-
-### Affected core subsystem(s)
-<!-- Please provide affected core subsystem(s). -->
-
-### Description of change
-<!-- Please provide a description of the change here. -->
+- [ ] Docstrings for new classes and functions are added.
+- [ ] Documentation is added to the README file.
+- [ ] Tests are included.
