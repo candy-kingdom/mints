@@ -448,7 +448,7 @@ from typing import List
 from {pyname} import cli, Arg
 
 @cli
-def entry(some: Arg[List[int]]):
+def test(some: Arg[List[int]]):
     print(type(some))
 
 if __name__ == '__main__':
@@ -466,7 +466,7 @@ Note that lists are non-greedy:
 from {pyname} import cli, Arg
 
 @cli
-def entry(x: Arg[int], y: Arg[List[int]], z: Arg[int]):
+def test(x: Arg[int], y: Arg[List[int]], z: Arg[int]):
     print(x, y, z)
 
 if __name__ == '__main__':
