@@ -494,14 +494,14 @@ from {pyname} import cli
 def git():
     ...
 
-@entry.command
+@git.command
 def pull():
     if rebase:
         print('pulling with rebase')
     else:
         print('pulling')
 
-@entry.command
+@git.command
 def push():
     print('pushing')
 
@@ -534,7 +534,7 @@ from {pyname} import cli
 def dotnet():
     ...
 
-@entry.command
+@dotnet.command
 def tool():
     ...
 
