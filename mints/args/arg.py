@@ -1,6 +1,6 @@
 from typing import Type
 
-from candies.cli.args.typed import Typed
+from mints.args.typed import Typed
 
 
 class Arg:

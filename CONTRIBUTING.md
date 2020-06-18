@@ -1,4 +1,4 @@
-# Contributing to {Name}
+# Contributing to Mints
 Thanks for considering to contribute.
 We're open for any improvements.
 
@@ -19,7 +19,7 @@ We appreciate clean and elegant code, and we love to follow some conventions in 
 - Avoid creating utils or helper modules, classes or functions.
 - Avoid using `get` in method names. For example, `get_item` should be `item`.
 
-Consider checking the [source code](https://github.com/candy-kingdom/cli/blob/develop/candies/cli/cli.py) for a more detailed picture. 
+Consider checking the [source code](https://github.com/candy-kingdom/mints/blob/develop/mints/cli.py) for a more detailed picture. 
 
 ### Commits
 - Use clear and concise commit messages.
@@ -27,4 +27,4 @@ Consider checking the [source code](https://github.com/candy-kingdom/cli/blob/de
 
 Note that we don't use the [imperative style](https://git.kernel.org/pub/scm/git/git.git/tree/Documentation/SubmittingPatches?id=HEAD#n133) for messages.
 
-Consider checking the [commit history](https://github.com/candy-kingdom/cli/commits/develop) for a more detailed picture.
+Consider checking the [commit history](https://github.com/candy-kingdom/mints/commits/develop) for a more detailed picture.

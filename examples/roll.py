@@ -17,7 +17,7 @@ import re
 import random
 from typing import List
 
-from candies.cli import cli, Arg
+from mints import cli, Arg
 
 
 class Roll:

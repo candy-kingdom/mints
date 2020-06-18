@@ -2,10 +2,10 @@
 
 import pytest
 
-from candies.cli.args.arg import Arg
-from candies.cli.args.flag import Flag
-from candies.cli.cli import cli, CLI
-from candies.cli.command import Command
+from mints.args.arg import Arg
+from mints.args.flag import Flag
+from mints.cli import cli, CLI
+from mints.command import Command
 
 from tests.execution import execute, redirect_stdout
 

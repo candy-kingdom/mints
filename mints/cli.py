@@ -2,9 +2,9 @@ import inspect
 import sys
 from typing import Callable, Optional, Union, Iterable, Any, Type, Text
 
-from candies.cli.command import Command
-from candies.cli.parsers.parser import Parser
-from candies.cli.parsers.standard import StandardParser
+from mints.command import Command
+from mints.parsers.parser import Parser
+from mints.parsers.standard import StandardParser
 
 
 class CLI:

@@ -6,10 +6,10 @@ specific behaviour that is shared between flags and options.
 
 import pytest
 
-from candies.cli.cli import cli, CLI
-from candies.cli.args.arg import Arg
-from candies.cli.args.opt import Opt
-from candies.cli.args.flag import Flag
+from mints.cli import cli, CLI
+from mints.args.arg import Arg
+from mints.args.opt import Opt
+from mints.args.flag import Flag
 
 from tests.execution import execute, redirect_stderr
 
