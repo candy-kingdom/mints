@@ -1,4 +1,4 @@
-# Contributing to {Name}
+# Contributing to Mints
 Thanks for considering to contribute.
 We're open for any improvements.
 
