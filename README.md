@@ -1,6 +1,7 @@
 # Mints
 
 [![Build](https://github.com/candy-kingdom/mints/workflows/Build/badge.svg)](https://github.com/candy-kingdom/mints/actions)
+[![PyPI version](https://badge.fury.io/py/mints.svg)](https://badge.fury.io/py/mints)
 
 _Clean and elegant CLI development kit._
 
