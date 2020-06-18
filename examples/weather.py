@@ -26,7 +26,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from candies.cli import cli, Arg, Opt, Flag
+from mints import cli, Arg, Opt, Flag
 
 
 class API:

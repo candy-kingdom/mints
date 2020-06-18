@@ -4,8 +4,8 @@ from typing import Any
 
 import pytest
 
-from candies.cli.cli import cli, CLI
-from candies.cli.args.arg import Arg
+from mints.cli import cli, CLI
+from mints.args.arg import Arg
 
 from tests.execution import execute, redirect_stderr
 

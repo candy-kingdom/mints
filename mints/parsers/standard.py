@@ -2,12 +2,12 @@ from argparse import ArgumentParser, HelpFormatter
 from typing import Iterable, Any, Callable, Type, Dict, Optional, Tuple, TypeVar
 import inspect
 
-from candies.cli.args.arg import Arg
-from candies.cli.args.flag import Flag
-from candies.cli.args.opt import Opt
-from candies.cli.args.typed import Typed
-from candies.cli.command import Command
-from candies.cli.parsers.parser import Parser, Invocation
+from mints.args.arg import Arg
+from mints.args.flag import Flag
+from mints.args.opt import Opt
+from mints.args.typed import Typed
+from mints.command import Command
+from mints.parsers.parser import Parser, Invocation
 
 
 class StandardParser(Parser):

@@ -15,7 +15,7 @@ Usage:
     HELLO!
 """
 
-from candies.cli import cli, Arg, Opt, Flag
+from mints import cli, Arg, Opt, Flag
 
 
 @cli

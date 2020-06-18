@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import Iterable, Dict, Any, Optional, Tuple
 
-from candies.cli.command import Command
+from mints.command import Command
 
 
 class Invocation:
