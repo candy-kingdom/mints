@@ -5,7 +5,7 @@ setup(
     version='0.0.1',
     packages=find_packages(exclude=['tests*']),
     license='MIT',
-    description='Tools for writing clean CLI code.',
+    description='Clean and elegant CLI development kit',
     long_description=open('README.md').read(),
     install_required=[''],
     url='https://github.com/candy-kingdom/mints',
