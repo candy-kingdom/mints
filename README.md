@@ -1,19 +1,19 @@
-# {Name}
+# Mints
 
-[![Build](https://github.com/candy-kingdom/cli/workflows/Build/badge.svg)](https://github.com/candy-kingdom/cli/actions)
+[![Build](https://github.com/candy-kingdom/mints/workflows/Build/badge.svg)](https://github.com/candy-kingdom/mints/actions)
 
 _Clean and elegant CLI development kit._
 
 ## Overview
 
-{Name} is a microframework that allows building declarative and nice-looking CLI apps.
+Mints is a microframework that allows building declarative and nice-looking CLI apps.
 Unlike [Click](https://click.palletsprojects.com/en/7.x/) or [Plac](https://micheles.github.io/plac/), it utilizes [function annotations](https://www.python.org/dev/peps/pep-3107/) more than [decorators](https://www.python.org/dev/peps/pep-0318/).
 
 Here is a quick example:
 ```py
 # say.py
 
-from {pyname} import cli, Arg, Flag, Opt
+from mints import cli, Arg, Flag, Opt
 
 @cli
 def say(phrase: Arg('a phrase to print'),
@@ -61,7 +61,7 @@ optional arguments:
 ## Install
 
 ```
-$ pip install {pipname}
+$ pip install mints
 ```
 
 ## Getting started
@@ -69,12 +69,12 @@ $ pip install {pipname}
 _Note: the examples are not [PEP 8](https://www.python.org/dev/peps/pep-0008/#blank-lines) compatible: one blank line is used instead of two to separate top-level definitions._
 
 In general, writing a CLI app is very similar to writing a regular function.
-{Name} is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
+Mints is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
 Consider the following example:
 ```py
 # say.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def say(phrase: Arg):
@@ -93,7 +93,7 @@ Hello, world!
 The main idea is very simple: you use the `cli` decorator to wrap a function that acts as an entry point of the application (`entry`), and then use the `cli()` to make things running.
 `Arg` is used to annotate positional arguments of the CLI.
 
-In the following section, we'll discuss more deeply how to implement different types of parameters in {Name}.
+In the following section, we'll discuss more deeply how to implement different types of parameters in Mints.
 
 ### Parameters
 
@@ -107,7 +107,7 @@ Consider the following function:
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(x: Arg, y: Arg):
@@ -132,7 +132,7 @@ To address this issue, you could provide a default value to the argument:
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(x: Arg, y: Arg = 2):
@@ -157,7 +157,7 @@ Consider the following example of a flag:
 ```py
 # test.py
 
-from {pyname} import cli, Flag
+from mints import cli, Flag
 
 @cli
 def test(some: Flag):
@@ -185,7 +185,7 @@ Here is an example of an option:
 ```py
 # test.py
 
-from {pyname} import cli, Opt
+from mints import cli, Opt
 
 @cli
 def test(some: Opt):
@@ -210,7 +210,7 @@ You still could provide a default value:
 ```py
 # test.py
 
-from {pyname} import cli, Opt
+from mints import cli, Opt
 
 @cli
 def test(some: Opt = 1):
@@ -226,13 +226,13 @@ $ python test.py
 
 ### Help page
 
-Each CLI in {Name} has a built-in help page, which is automatically generated.
+Each CLI in Mints has a built-in help page, which is automatically generated.
 
 Consider the following example:
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(some: Arg):
@@ -260,7 +260,7 @@ To assign a description to an argument, instantiate an annotation with the `desc
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(some: Arg('some argument')):
@@ -300,7 +300,7 @@ To define a shortcut letter for a flag or an option, the `short` parameter of ei
 ```py
 # test.py
 
-from {pyname} import cli, Flag
+from mints import cli, Flag
 
 @cli
 def test(some: Flag(short='s')):
@@ -321,7 +321,7 @@ To override this behavior, the `prefix` parameter of either `Flag` or `Opt` anno
 ```py
 # test.py
 
-from {pyname} import cli, Flag
+from mints import cli, Flag
 
 @cli
 def test(some: Flag(prefix='+')):
@@ -343,7 +343,7 @@ Consider the following example:
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(some: Arg):
@@ -365,7 +365,7 @@ You could parse any type that is supported by [`argparse`](https://docs.python.o
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(some: Arg[int]):
@@ -386,7 +386,7 @@ You could use the `parse` decorator just for that:
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 # User-defined type.
 class Custom:
@@ -414,7 +414,7 @@ Note that you could also use the `add_parser` function to manually add the parse
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 class Custom:
     @staticmethod
@@ -445,7 +445,7 @@ Variable arguments are also supported through the `List` type:
 
 from typing import List
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(some: Arg[List[int]]):
@@ -463,7 +463,7 @@ Note that lists are non-greedy:
 ```py
 # test.py
 
-from {pyname} import cli, Arg
+from mints import cli, Arg
 
 @cli
 def test(x: Arg[int], y: Arg[List[int]], z: Arg[int]):
@@ -482,13 +482,13 @@ Consider checking the [rolling dices](https://github.com/candy-kingdom/cli/blob/
 ### Commands
 
 Complex command line interfaces like `git` have several subcommands: `git status`, `git pull`, `git push`, etc.
-These subcommands act as separate CLIs and, thus, should be defined as separate functions in {Name}.
+These subcommands act as separate CLIs and, thus, should be defined as separate functions in Mints.
 
 Consider the following example as a mock of `git` CLI:
 ```py
 # git.py
 
-from {pyname} import cli
+from mints import cli
 
 @cli
 def git():
@@ -524,11 +524,11 @@ pushing
 Sometimes it's needed to have a deeper hierarchy of subcommands.
 For example, the `dotnet` CLI tool allows calling [`dotnet tool install ...`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install).
 
-In {Name}, this could be implemented in a natural way:
+In Mints, this could be implemented in a natural way:
 ```py
 # dotnet.py
 
-from {pyname} import cli
+from mints import cli
 
 @cli
 def dotnet():
