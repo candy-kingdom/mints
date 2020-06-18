@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='candy-cli',
+    name='mints',
     version='0.0.1',
     packages=find_packages(exclude=['tests*']),
     license='MIT',
     description='Tools for writing clean CLI code.',
     long_description=open('README.md').read(),
     install_required=[''],
-    url='https://github.com/candy-kingdom/cli',
+    url='https://github.com/candy-kingdom/mints',
     author='Candy Kingdom',
     author_email='candy.kingdom.github@gmail.com',
     classifiers=[
