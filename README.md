@@ -549,12 +549,12 @@ if __name__ == '__main__':
 
 ## Learn more
 
-Learn more by looking at our carefully prepared [examples](https://github.com/candy-kingdom/cli/blob/master/examples/).
+Learn more by looking at our carefully prepared [examples](https://github.com/candy-kingdom/mints/blob/master/examples/).
 
 ## License
 
-The package is licensed under the [MIT](https://github.com/candy-kingdom/cli/blob/master/LICENSE) license.
+The package is licensed under the [MIT](https://github.com/candy-kingdom/mints/blob/master/LICENSE) license.
 
 ## Contributing
 
-Before creating an issue or submitting a patch, check out our [contribution guildelines](https://github.com/candy-kingdom/cli/blob/master/CONTRIBUTING).
+Before creating an issue or submitting a patch, check out our [contribution guildelines](https://github.com/candy-kingdom/mints/blob/master/CONTRIBUTING).
