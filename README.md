@@ -489,14 +489,14 @@ Consider the following example as a mock of `git` CLI:
 ```py
 # git.py
 
-from mints import cli
+from mints import cli, Flag
 
 @cli
 def git():
     ...
 
 @git.command
-def pull():
+def pull(rebase: Flag):
     if rebase:
         print('pulling with rebase')
     else:
