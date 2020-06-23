@@ -415,11 +415,7 @@ Or the `add_parser` function:
 
 from mints import cli, Arg
 
-class Custom:
-    @staticmethod
-    def parse(x: str) -> 'Custom':
-        return Custom(x)
-        
+class Custom:        
     def __init__(self, x):
         self.property = x
 
@@ -428,7 +424,7 @@ def test(some: Arg[Custom]):
     print(some.property)
 
 if __name__ == '__main__':
-    cli.add_parser(Custom.parse)
+    cli.add_parser(Custom)
     cli()
 ```
 ```
@@ -448,7 +444,7 @@ from mints import cli, Arg
 
 @cli
 def test(some: Arg[List[int]]):
-    print(type(some))
+    print(some)
 
 if __name__ == '__main__':
     cli()
