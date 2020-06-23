@@ -70,7 +70,8 @@ $ pip install mints
 _Note: the examples are not [PEP 8](https://www.python.org/dev/peps/pep-0008/#blank-lines) compatible: one blank line is used instead of two to separate top-level definitions._
 
 In general, writing a CLI app is very similar to writing a regular function.
-Mints is based on this metaphor, allowing to describe the whole interface of the app using only a function signature.
+This is also true for Mints.
+
 Consider the following example:
 ```py
 # say.py
@@ -91,10 +92,9 @@ $ python3 say.py "Hello, world!"
 Hello, world!
 ```
 
-The main idea is very simple: you use the `cli` decorator to wrap a function that acts as an entry point of the application (`entry`), and then use the `cli()` to make things running.
-`Arg` is used to annotate positional arguments of the CLI.
+The main idea is very simple: you use the `cli` decorator to wrap a function that acts as an entry point of the application (`say` function from the example above), and then call the `cli()` to make things running.
 
-In the following section, we'll discuss more deeply how to implement different types of parameters in Mints.
+In the next sections you'll find out how to build more complex apps in Mints.
 
 ### Parameters
 
@@ -102,7 +102,7 @@ In the following section, we'll discuss more deeply how to implement different t
 
 `Arg` is an annotation for positional arguments.
 
-Positional arguments work in the same way as in programming languages.
+Positional arguments in CLIs work in the same way as in programming languages.
 
 Consider the following function:
 ```py
@@ -154,7 +154,7 @@ $ python test.py 1
 Flags are boolean arguments that represent an on/off behavior.
 Unlike positional arguments, they should be specified in the command line only with a special syntax.
 
-Consider the following example of a flag:
+Here is an example of a flag:
 ```py
 # test.py
 
@@ -182,7 +182,7 @@ False
 
 Options are simply flags with values (or arguments with names).
 
-Here is an example of an option:
+That's how you use the `Opt`:
 ```py
 # test.py
 
@@ -297,7 +297,7 @@ One could write:
 $ python test.py -s 1
 ```
 
-To define a shortcut letter for a flag or an option, the `short` parameter of either `Flag` or `Opt` annotation should be used:
+To define a shortcut letter for a flag or an option, the `short` parameter of either `Flag` or `Opt` should be used:
 ```py
 # test.py
 
@@ -318,7 +318,7 @@ True
 ### Prefix
 
 Flags and options are usually called with the `-` prefix (in short and long variations).
-To override this behavior, the `prefix` parameter of either `Flag` or `Opt` annotation should be used.
+To override this behavior, the `prefix` parameter of either `Flag` or `Opt` should be used.
 ```py
 # test.py
 
@@ -338,9 +338,8 @@ True
 
 ### Types
 
-By default, the argument that is passed from the CLI, if it's handled by an `Opt` or an `Arg`, is of `str` type (or of `bool` for `Flag`).
+By default, an argument that is passed from the CLI is of `str` type if it's annotated with either `Opt` or `Arg`, and of `bool` if it's annotated with `Flag`.
 
-Consider the following example:
 ```py
 # test.py
 
@@ -358,11 +357,9 @@ $ python test.py 1
 <class 'str'>
 ```
 
-To convert the argument into some type, you can use the square brackets syntax on annotations.
-
 #### Default types
 
-You could parse any type that is supported by [`argparse`](https://docs.python.org/3/library/argparse.html#type) with the following syntax:
+To parse a primitive type that is supported by the [`argparse`](https://docs.python.org/3/library/argparse.html#type), use the following syntax:
 ```py
 # test.py
 
@@ -382,8 +379,9 @@ $ python test.py 1
 
 #### User-defined types
 
-When a user-defined type should be parsed, the parser for this type should be registered within the CLI app.
-You could use the `parse` decorator just for that:
+To parse a custom type, register a parser function just for that.
+
+You could use either the `parse` decorator:
 ```py
 # test.py
 
@@ -411,7 +409,7 @@ $ python test.py 1
 1
 ```
 
-Note that you could also use the `add_parser` function to manually add the parser:
+Or the `add_parser` function:
 ```py
 # test.py
 
@@ -440,7 +438,7 @@ $ python test.py 1
 
 ### Variable arguments
 
-Variable arguments are also supported through the `List` type:
+Variable arguments are also supported through the standard `List` type:
 ```py
 # test.py
 
@@ -460,7 +458,7 @@ $ python test.py 1 2 3
 [1, 2, 3]
 ```
 
-Note that lists are non-greedy:
+Note that lists are _non-greedy_:
 ```py
 # test.py
 
@@ -482,7 +480,7 @@ Consider checking the [rolling dices](https://github.com/candy-kingdom/cli/blob/
 
 ### Commands
 
-Complex command line interfaces like `git` have several subcommands: `git status`, `git pull`, `git push`, etc.
+Complex command line interfaces like `git` have several subcommands, e.g., `git status`, `git pull`, `git push`, etc.
 These subcommands act as separate CLIs and, thus, should be defined as separate functions in Mints.
 
 Consider the following example as a mock of `git` CLI:
