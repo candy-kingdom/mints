@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mints',
-    version='0.0.1',
+    version='0.1.0',
     packages=find_packages(exclude=['tests*']),
     license='MIT',
     description='Clean and elegant CLI development kit',
@@ -12,7 +12,7 @@ setup(
     author='Candy Kingdom',
     author_email='candy.kingdom.github@gmail.com',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: MIT',
         'Natural Language :: English',
