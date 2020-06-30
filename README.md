@@ -22,7 +22,7 @@ def say(phrase: Arg('a phrase to print'),
         times:  Opt[int]('how many times to print') = 1):
     """Prints a phrase specified number of times."""
 
-    for i in range(0, times):
+    for _ in range(times):
         print(phrase.upper() if caps else phrase)
 
 if __name__ == '__main__':

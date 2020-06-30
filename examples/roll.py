@@ -33,7 +33,7 @@ class Roll:
 
 
 @cli
-def roll(rolls: Arg[List[Roll]]('A list of dice rolls.')):
+def roll(rolls: Arg[List[Roll]]('a list of dice rolls')):
     """Roll dice.
 
     Each die should be specified using the dice notation: [m]d{n},

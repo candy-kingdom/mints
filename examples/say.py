@@ -19,10 +19,10 @@ from mints import cli, Arg, Opt, Flag
 
 
 @cli
-def say(phrase: Arg('A phrase to print.'),
-        caps:   Flag('Whether to print in the upper-case.'),
-        times:  Opt[int]('How many times to print.') = 1):
-    """Prints a phrase the specified number of times."""
+def say(phrase: Arg('a phrase to print'),
+        caps:   Flag('whether to print in the upper-case'),
+        times:  Opt[int]('how many times to print') = 1):
+    """Prints a phrase specified number of times."""
 
     for _ in range(times):
         print(phrase.upper() if caps else phrase)

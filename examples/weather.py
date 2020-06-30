@@ -62,11 +62,11 @@ class API:
 
 
 @cli
-def weather(city:     Arg('A city to request weather or a forecast for.'),
-            country:  Arg('A country where the city is located.'),
-            forecast: Flag('Whether to provide a forecast.'),
-            lines:    Opt('The amount of lines to be included in a forecast.') = None,
-            key:      Opt('The OpenWeather API key.') = None):
+def weather(city:     Arg('a city to request weather or a forecast for'),
+            country:  Arg('a country where the city is located'),
+            forecast: Flag('whether to provide a forecast'),
+            lines:    Opt('the amount of lines to be included in a forecast') = None,
+            key:      Opt('the OpenWeather API key') = None):
     """Find out the current weather or a forecast in any city.
 
     The CLI allows you to retrieve weather or a forecast for
