@@ -1,6 +1,5 @@
 """Various tests for `candies.cli.args.flag.Flag`."""
 
-from typing import Any
 from argparse import ArgumentError
 
 import pytest

@@ -1,7 +1,5 @@
 """Various tests for `candies.cli.command.Command`."""
 
-from typing import Any
-
 import pytest
 
 from mints.args.arg import Arg
@@ -9,7 +7,7 @@ from mints.args.opt import Opt
 from mints.args.flag import Flag
 from mints.cli import cli, CLI
 
-from tests.execution import execute
+from tests.execution import execute, redirect_stdout
 
 
 @pytest.fixture(autouse=True)
@@ -191,3 +189,274 @@ def test_two_commands_with_different_arguments():
     # Assert.
     assert cx_a == (+1, +2, True)
     assert cx_b == (-1, -2, True)
+
+
+def test_command_raising_exception():
+    # Arrange.
+    @cli
+    def main():
+        raise ValueError('Message.')
+
+    # Act.
+    cx = execute(cli, '')
+
+    # Assert.
+    assert isinstance(cx, ValueError)
+    assert cx.args == ('Message.',)
+
+
+def test_subcommand_raising_exception():
+    # Arrange.
+    @cli
+    def one():
+        pass
+
+    @one.command
+    def two():
+        raise ValueError('Message.')
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert isinstance(cx, ValueError)
+    assert cx.args == ('Message.',)
+
+
+def test_command_and_subcommand_raising_exception():
+    # Arrange.
+    @cli
+    def one():
+        raise ValueError('One.')
+
+    @one.command
+    def two():
+        raise ValueError('Two.')
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert isinstance(cx, ValueError)
+    assert cx.args == ('One.',)
+
+
+def test_command_catching_exception_of_exact_type():
+    # Arrange.
+    @cli
+    def main():
+        raise ValueError('Message.')
+
+    @main.catch
+    def _(error: Exception):
+        return 'Whatever.'
+
+    @main.catch
+    def _(error: ValueError):
+        return error.args
+
+    # Act.
+    cx = execute(cli, '')
+
+    # Assert.
+    assert cx == ('Message.',)
+
+
+def test_command_catching_exception_of_base_type():
+    # Arrange.
+    @cli
+    def main():
+        raise ValueError('Message.')
+
+    @main.catch
+    def _(error: Exception):
+        return error.args
+
+    # Act.
+    cx = execute(cli, '')
+
+    # Assert.
+    assert cx == ('Message.',)
+
+
+def test_command_not_catching_exception_of_different_type():
+    # Arrange.
+    @cli
+    def main():
+        raise ValueError('Message.')
+
+    @main.catch
+    def _(error: TypeError):
+        return 'Whatever.'
+
+    # Act.
+    cx = execute(cli, '')
+
+    # Assert.
+    assert isinstance(cx, ValueError)
+    assert cx.args == ('Message.',)
+
+
+def test_command_not_catching_exception_raised_when_handling_other_exception():
+    # Arrange.
+    @cli
+    def main():
+        raise ValueError('Message.')
+
+    @main.catch
+    def _(error: ValueError):
+        raise TypeError()
+
+    @main.catch
+    def _(error: TypeError):
+        return 'Whatever.'
+
+    # Act.
+    cx = execute(cli, '')
+
+    # Assert.
+    assert isinstance(cx, TypeError)
+
+
+def test_command_catching_exception_of_subcommand():
+    # Arrange.
+    @cli
+    def one():
+        pass
+
+    @one.command
+    def two():
+        raise ValueError('Message.')
+
+    @one.catch
+    def _(error: Exception):
+        return 'Whatever.'
+
+    @one.catch
+    def _(error: ValueError):
+        return error.args
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert cx == ('Message.',)
+
+
+def test_command_halting_execution_after_catching_exception():
+    # Arrange.
+    @cli
+    def one():
+        raise ValueError('Message.')
+
+    @one.command
+    def two():
+        print('Whatever.')
+
+    @one.catch
+    def _(error: ValueError):
+        return error.args
+
+    # Act.
+    cx, out = execute(cli, 'two', redirect_stdout)
+
+    # Assert.
+    assert cx == ('Message.',)
+    assert out == ''
+
+
+def test_subcommand_catching_exception_of_exact_type():
+    # Arrange.
+    @cli
+    def one():
+        pass
+
+    @one.command
+    def two():
+        raise ValueError('Message.')
+
+    @two.catch
+    def _(error: Exception):
+        return 'Whatever.'
+
+    @two.catch
+    def _(error: ValueError):
+        return error.args
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert cx == ('Message.',)
+
+
+def test_subcommand_catching_exception_of_base_type():
+    # Arrange.
+    @cli
+    def one():
+        pass
+
+    @one.command
+    def two():
+        raise ValueError('Message.')
+
+    @two.catch
+    def _(error: Exception):
+        return error.args
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert cx == ('Message.',)
+
+
+def test_subcommand_not_catching_exception_of_different_type():
+    # Arrange.
+    @cli
+    def one():
+        pass
+
+    @one.command
+    def two():
+        raise ValueError('Message.')
+
+    @one.catch
+    def _(error: TypeError):
+        return 'One.'
+
+    @two.catch
+    def _(error: TypeError):
+        return 'Two.'
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert isinstance(cx, ValueError)
+    assert cx.args == ('Message.',)
+
+
+def test_command_catching_exception_raised_when_subcommand_handling_other_exception():
+    # Arrange.
+    @cli
+    def one():
+        pass
+
+    @one.command
+    def two():
+        raise ValueError('Two.')
+
+    @one.catch
+    def _(error: ValueError):
+        return error.args
+
+    @two.catch
+    def _(error: ValueError):
+        raise ValueError('One.')
+
+    # Act.
+    cx = execute(cli, 'two')
+
+    # Assert.
+    assert cx == ('One.',)

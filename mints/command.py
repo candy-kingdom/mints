@@ -1,4 +1,5 @@
-from typing import Callable, Optional, Union
+import inspect
+from typing import Callable, Optional, Union, Any
 
 
 class Command:
@@ -39,6 +40,7 @@ class Command:
         self.help_ = None
         self.description = description or func.__doc__
         self.subcommands = {}
+        self.catches = {}
 
     def command(self,
                 func: Optional[Callable] = None,
@@ -98,6 +100,70 @@ class Command:
                 return f'Help for "{command.name}" is yet to be done. ' \
                        f'Please stand by.'
         """
+
         self.help_ = func
+
+        return func
+
+    def catch(self, func: Callable[[BaseException], Any]) -> Callable:
+        """Defines a function to handle errors of specific types
+        raised during execution of the command.
+
+        This method is designed to be used as a decorator.
+
+        The decorated function must have a single parameter. This parameter
+        must be annotated with the type of an exception that the function
+        will handle (the annotation may also be a union of exception types).
+
+        The decorated function will be called to handle errors raised during
+        execution of the command or its subcommands (unless a subcommand
+        catches that error by itself).
+
+        Args:
+            func: A function to handle errors with.
+
+        Returns:
+            A decorator to decorate an error handler function with.
+
+        Raises:
+            `ValueError` if
+                - the decorated function has an invalid amount of parameters;
+                - the decorated function parameter is not annotated;
+                - an error handler for an exception has already been defined.
+
+        Example:
+            @cli
+            def divide(x: Arg[int], y: Arg[int]):
+                print(x / y)
+
+            @divide.catch
+            def _(error: ZeroDivisionError):
+                print('Division by zero is not defined.')
+        """
+
+        signature = inspect.signature(func)
+        parameter = next(iter(signature.parameters.values()), None)
+
+        if len(signature.parameters) != 1:
+            raise ValueError(f'Expected a function with a single parameter, '
+                             f'but got with {len(signature.parameters)}.')
+        if parameter.annotation is parameter.empty:
+            raise ValueError(f'Expected the first argument of '
+                             f'a function to be annotated.')
+
+        def catch(exception):
+            if exception in self.catches:
+                raise ValueError(f'An error handler for {exception} '
+                                 f'has already been defined.')
+
+            self.catches[exception] = func
+
+        annotation = parameter.annotation
+
+        if getattr(annotation, '__origin__', None) is Union:
+            for exception in annotation.__args__:
+                catch(exception)
+        else:
+            catch(annotation)
 
         return func

@@ -58,38 +58,10 @@ class CLI:
                 cli()
         """
 
-        def set(func: Callable) -> Command:
-            if self.main is not None:
-                raise ValueError(f"Cannot set '{func.__name__}': the main "
-                                 f"command has already been set.")
-
-            self.main = Command(func, **kwargs)
-
-            return self.main
-
-        def run(args: Optional[Iterable[str]]) -> Any:
-            if kwargs:
-                raise ValueError("Cannot run the CLI: "
-                                 "`kwargs` are not expected.")
-            if self.main is None:
-                raise ValueError("Cannot run the CLI: "
-                                 "the main command is not set.")
-
-            parser = self.parser or StandardParser(self)
-            args = args if args is not None else sys.argv[1:]
-
-            command = self.main
-            context = None
-
-            for invoke in parser.parse(args):
-                command, context = invoke(command, context)
-
-            return context
-
         if callable(args_or_func):
-            return set(args_or_func)
+            return self._set(args_or_func, **kwargs)
         else:
-            return run(args_or_func)
+            return self._run(args_or_func, **kwargs)
 
     def parse(self, func: Callable[[str], Any]) -> Callable[[str], Any]:
         """Defines a parser function for a custom type.
@@ -120,7 +92,7 @@ class CLI:
         """
         return self.add_parser(func)
 
-    def add_parser(self, callable: Union[Type, Callable[[str], Any]]) \
+    def add_parser(self, callable_or_type: Union[Type, Callable[[str], Any]]) \
             -> Union[Type, Callable[[str], Any]]:
         """Adds a parser for a custom type.
 
@@ -128,7 +100,7 @@ class CLI:
         its return type annotation as the custom type to add a parser for.
 
         Args:
-            callable: Either a parser function or a type.
+            callable_or_type: Either a parser function or a type.
 
         Raises:
             `ValueError` if
@@ -157,27 +129,27 @@ class CLI:
             cli.add_parser(Money.dollars)
         """
 
-        if isinstance(callable, type):
-            type_ = callable
+        if isinstance(callable_or_type, type):
+            type_ = callable_or_type
         else:
-            signature = inspect.signature(callable)
+            signature = inspect.signature(callable_or_type)
             parameter = next(iter(signature.parameters.values()), None)
 
             if len(signature.parameters) != 1:
                 raise ValueError(f"Expected a parser function "
-                                 f"'{callable.__name__}' "
+                                 f"'{callable_or_type.__name__}' "
                                  f"to have a single parameter.")
             if parameter.annotation not in (parameter.default, str, Any, Text):
                 raise ValueError(f"Expected a parameter of a parser "
-                                 f"function '{callable.__name__}' to be "
-                                 f"either empty or 'str', but got "
+                                 f"function '{callable_or_type.__name__}' to "
+                                 f"be either empty or 'str', but got "
                                  f"{parameter.annotation}.")
 
             type_ = signature.return_annotation
 
             if type_ is signature.empty:
                 raise ValueError(f"Expected a parser function "
-                                 f"'{callable.__name__}' "
+                                 f"'{callable_or_type.__name__}' "
                                  f"to have a return annotation.")
 
         if type_ in self.parsers:
@@ -188,9 +160,53 @@ class CLI:
                              f"has already been added "
                              f"(namely '{name}').")
 
-        self.parsers[type_] = callable
+        self.parsers[type_] = callable_or_type
 
-        return callable
+        return callable_or_type
+
+    def _set(self, func: Callable, **kwargs) -> Any:
+        """Sets the specified function as the main command of the CLI."""
+
+        if self.main is not None:
+            raise ValueError(f"Cannot set '{func.__name__}': the main "
+                             f"command has already been set.")
+
+        self.main = Command(func, **kwargs)
+
+        return self.main
+
+    def _run(self, args: Iterable[str], **kwargs) -> Any:
+        """Runs the CLI with the specified arguments."""
+
+        if kwargs:
+            raise ValueError('Cannot run the CLI: '
+                             '`kwargs` are not expected.')
+        if self.main is None:
+            raise ValueError('Cannot run the CLI: '
+                             'the main command is not set.')
+
+        args = args if args is not None else sys.argv[1:]
+
+        parser = self.parser or StandardParser(self)
+        parsed = iter(parser.parse(args))
+
+        def run(command: Command, context: Any) -> Any:
+            if (invoke := next(parsed, None)) is None:
+                return context
+
+            try:
+                # Invoke the current command and run the next subcommand (if any).
+                return run(*invoke(command, context))
+            except BaseException as error:
+                for type_ in type(error).mro():
+                    if type_ in command.catches:
+                        return command.catches[type_](error)
+
+                # Raise the exception and hope that some
+                # parent command will handle it.
+                raise
+
+        return run(self.main, context=None)
 
 
 cli: CLI = CLI()
