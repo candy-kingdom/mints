@@ -123,7 +123,7 @@ class Command:
             func: A function to handle errors with.
 
         Returns:
-            A decorator to decorate an error handler function with.
+            The decorated function.
 
         Raises:
             `ValueError` if
