@@ -1,4 +1,4 @@
-"""Various tests for `candies.cli.command.Command.help`."""
+"""Various tests for `mints.command.Command.help`."""
 
 import pytest
 

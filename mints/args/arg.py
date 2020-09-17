@@ -19,7 +19,7 @@ class Arg:
         This class intended to be used as a type annotation in CLI functions
         to help the parser distinguish simple arguments, flags, prompts, etc.
 
-        Consider looking at the documentation of the `candies.cli.CLI` class
+        Consider looking at the documentation of the `mints.cli.CLI` class
         for more details about which kinds of CLIs the `Arg` produces.
 
     Attributes:

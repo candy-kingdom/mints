@@ -1,4 +1,4 @@
-"""Various tests for `candies.cli.command.Command`."""
+"""Various tests for `mints.command.Command`."""
 
 from typing import Any
 

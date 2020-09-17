@@ -13,7 +13,7 @@ class CLI:
     Attributes:
         main: A main command to execute.
         parser: A parser to parse command line arguments with
-            (`candies.cli.parsers.StandardParser` if not specified).
+            (`mints.parsers.StandardParser` if not specified).
         parsers: A dictionary that contains parsers for custom types.
             Maps a custom type to a parser itself.
     """

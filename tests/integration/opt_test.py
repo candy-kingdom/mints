@@ -1,4 +1,4 @@
-"""Various tests for `candies.cli.args.opt.Opt`.
+"""Various tests for `mints.args.opt.Opt`.
 
 Consider looking at `tests.integration.flag_test` for more details about some
 specific behaviour that is shared between flags and options.

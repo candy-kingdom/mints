@@ -1,4 +1,4 @@
-"""Various tests for `candies.cli.args.arg.Arg`."""
+"""Various tests for `mints.args.arg.Arg`."""
 
 from typing import Any
 
