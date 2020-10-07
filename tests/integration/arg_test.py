@@ -1,7 +1,5 @@
 """Various tests for `mints.args.arg.Arg`."""
 
-from typing import Any
-
 import pytest
 
 from mints.cli import cli, CLI

@@ -1,6 +1,5 @@
 """Various tests for `mints.args.flag.Flag`."""
 
-from typing import Any
 from argparse import ArgumentError
 
 import pytest
